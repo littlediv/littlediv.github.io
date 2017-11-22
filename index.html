@@ -61,47 +61,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-hello" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/22/hello/" class="article-date">
-  <time datetime="2017-11-22T09:19:59.000Z" itemprop="datePublished">2017-11-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/22/hello/">hello</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>hello </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/22/hello/" data-id="cjaaulddc0001wtyuwang1i3j" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-ubutun 搭建 hexo" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/11/22/ubutun 搭建 hexo/" class="article-date">
-  <time datetime="2017-11-22T09:18:05.664Z" itemprop="datePublished">2017-11-22</time>
+  <time datetime="2017-11-22T09:37:39.664Z" itemprop="datePublished">2017-11-22</time>
 </a>
     
   </div>
@@ -120,8 +83,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>欢迎使用 <strong>{小书匠}(xiaoshujiang)编辑器</strong>，您可以通过==设置==里的修改模板来改变新建文章的内容。</p>
-<h2 id="安装-Node-js"><a href="#安装-Node-js" class="headerlink" title="安装 Node.js"></a>安装 Node.js</h2><pre><code>sudo add-apt-repository ppa:chris-lea/node.js
+        <h2 id="安装-Node-js"><a href="#安装-Node-js" class="headerlink" title="安装 Node.js"></a>安装 Node.js</h2><pre><code>sudo add-apt-repository ppa:chris-lea/node.js
 sudo apt-get update
 sudo apt-get install nodejs
 </code></pre><h2 id="安装-Git"><a href="#安装-Git" class="headerlink" title="安装 Git"></a>安装 Git</h2><pre><code>sudo apt-get install git
@@ -168,7 +130,31 @@ hexo generate
 hexo deploy
 </code></pre><h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="hexo无法上传到github"><a href="#hexo无法上传到github" class="headerlink" title="hexo无法上传到github"></a>hexo无法上传到github</h3><p>终于找到原因了，真的坑，在_config.yml中名/值中要有空格例如：type：（空格）git，虽然之前在万能的谷歌搜索了，但是关键词没有用对，这个检索就出来了，<a href="https://github.com/hexojs/hexo/issues/1154" target="_blank" rel="noopener">https://github.com/hexojs/hexo/issues/1154</a></p>
 <p>我真是醉了。<br>ps。最新版的hexo貌似要在第一次hexo d的之前，要有npm install hexo-deployer-git –save具体看链接描述<br>如果你碰到问题了我发现他们的官方github的issue上一搬都能找到答案，真心建议，遇到问题就上这里就行了</p>
-<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/kesarchen/article/details/50579550" target="_blank" rel="noopener"> ubuntu下使用hexo搭建博客</a></p>
+<h2 id="如何解决github-Hexo的博客多终端同步问题"><a href="#如何解决github-Hexo的博客多终端同步问题" class="headerlink" title="如何解决github+Hexo的博客多终端同步问题"></a>如何解决github+Hexo的博客多终端同步问题</h2><h3 id="在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname-github-io的hexo分支上"><a href="#在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname-github-io的hexo分支上" class="headerlink" title="在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname.github.io的hexo分支上"></a>在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname.github.io的hexo分支上</h3><pre><code>git init  //初始化本地仓库
+git add source //将必要的文件依次添加，有些文件夹如npm install产生的node_modules由于路径过长不好处理，所以这里没有用`git add .`命令了，而是依次添加必要文件，如下图所示
+git commit -m &quot;Blog Source Hexo&quot;
+git branch hexo  //新建hexo分支
+git checkout hexo  //切换到hexo分支上
+git remote add origin git@github.com:yourname/yourname.github.io.git  //将本地与Github项目对接
+git push origin hexo  //push到Github项目的hexo分支上
+</code></pre><p>这样你的github项目中就会多出一个Hexo分支，这个就是用于多终端同步关键的部分。</p>
+<h3 id="另一终端完成clone和push更新"><a href="#另一终端完成clone和push更新" class="headerlink" title="另一终端完成clone和push更新"></a>另一终端完成clone和push更新</h3><p>此时在另一终端更新博客，只需要将Github的hexo分支clone下来，进行初次的相关配置</p>
+<pre><code>git clone -b hexo git@github.com:yourname/yourname.github.io.git  //将Github中hexo分支clone到本地
+cd  yourname.github.io  //切换到刚刚clone的文件夹内
+npm install    //注意，这里一定要切换到刚刚clone的文件夹内执行，安装必要的所需组件，不用再init
+hexo new post &quot;new blog name&quot;   //新建一个.md文件，并编辑完成自己的博客内容
+git add source  //经测试每次只要更新sorcerer中的文件到Github中即可，因为只是新建了一篇新博客
+git commit -m &quot;XX&quot;
+git push origin hexo  //更新分支
+hexo d -g   //push更新完分支之后将自己写的博客对接到自己搭的博客网站上，同时同步了Github中的master
+</code></pre><h3 id="不同终端间愉快地玩耍"><a href="#不同终端间愉快地玩耍" class="headerlink" title="不同终端间愉快地玩耍"></a>不同终端间愉快地玩耍</h3><p>在不同的终端已经做完配置，就可以愉快的分享自己更新的博客<br>进入自己相应的文件夹</p>
+<pre><code>git pull origin hexo  //先pull完成本地与远端的融合
+hexo new post &quot; new blog name&quot;
+git add source
+git commit -m &quot;XX&quot;
+git push origin hexo
+hexo d -g
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/kesarchen/article/details/50579550" target="_blank" rel="noopener"> ubuntu下使用hexo搭建博客</a></p>
 <p><a href="http://www.jianshu.com/p/24cb74aeb0a3" target="_blank" rel="noopener">Ubuntu上用hexo建立自己的博客</a></p>
 <p><a href="http://blog.csdn.net/Monkey_LZL/article/details/60870891" target="_blank" rel="noopener">如何解决github+Hexo的博客多终端同步问题</a></p>
 <p><a href="https://righere.github.io/2016/10/10/install-hexo/" target="_blank" rel="noopener">搭建hexo博客并简单的实现多终端同步</a></p>
@@ -177,11 +163,48 @@ hexo deploy
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/22/ubutun 搭建 hexo/" data-id="cjaauldde0002wtyuhzmsea9o" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/11/22/ubutun 搭建 hexo/" data-id="cjaauvspj0001vkyuxj2t01se" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/新建-模板-小书匠/">新建,模板,小书匠</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
 
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/22/hello/" class="article-date">
+  <time datetime="2017-11-22T09:19:59.000Z" itemprop="datePublished">2017-11-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/22/hello/">hello</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>hello </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/22/hello/" data-id="cjaauvspn0002vkyuiv8u4hxg" class="article-share-link">Share</a>
+      
+      
     </footer>
   </div>
   
@@ -224,7 +247,7 @@ hexo deploy
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/22/hello-world/" data-id="cjaauldd70000wtyud6nvuidy" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/11/22/hello-world/" data-id="cjaauvspe0000vkyuxuexyrq5" class="article-share-link">Share</a>
       
       
     </footer>
@@ -246,7 +269,7 @@ hexo deploy
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/新建-模板-小书匠/">新建,模板,小书匠</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
     </div>
   </div>
 
@@ -256,7 +279,7 @@ hexo deploy
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/新建-模板-小书匠/" style="font-size: 10px;">新建,模板,小书匠</a>
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
     </div>
   </div>
 
@@ -278,11 +301,11 @@ hexo deploy
       <ul>
         
           <li>
-            <a href="/2017/11/22/hello/">hello</a>
+            <a href="/2017/11/22/ubutun 搭建 hexo/">ubuntu 搭建 hexo</a>
           </li>
         
           <li>
-            <a href="/2017/11/22/ubutun 搭建 hexo/">ubuntu 搭建 hexo</a>
+            <a href="/2017/11/22/hello/">hello</a>
           </li>
         
           <li>
