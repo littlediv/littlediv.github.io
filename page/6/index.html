@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/page/6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-android butterknife" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android butterknife/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.663Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="android-butterknife"><a href="#android-butterknife" class="headerlink" title="android butterknife"></a>android butterknife</h1><h2 id="引入类库（-android-studio-）"><a href="#引入类库（-android-studio-）" class="headerlink" title="引入类库（ android studio ）"></a>引入类库（ android studio ）</h2><p>1 最外层 bulid.gradle </p>
+<p>添加 classpath ‘com.neenbedankt.gradle.plugins:android-apt:1.8’</p>
+<pre><code>buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath &apos;com.android.tools.build:gradle:2.2.3&apos;
+
+        classpath &apos;com.neenbedankt.gradle.plugins:android-apt:1.8&apos;
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+</code></pre><p>2 app 项目 build.gradle</p>
+<p>添加<br>apply plugin: ‘android-apt’</p>
+<p>compile ‘com.jakewharton:butterknife:8.4.0’<br>apt ‘com.jakewharton:butterknife-compiler:8.4.0’</p>
+<pre><code>apply plugin: &apos;android-apt
+
+dependencies {
+    compile fileTree(include: [&apos;*.jar&apos;], dir: &apos;libs&apos;)
+    androidTestCompile(&apos;com.android.support.test.espresso:espresso-core:2.2.2&apos;, {
+        exclude group: &apos;com.android.support&apos;, module: &apos;support-annotations&apos;
+    })
+    compile &apos;com.android.support:appcompat-v7:25.3.1&apos;
+    testCompile &apos;junit:junit:4.12&apos;
+    compile project(&apos;:easeui&apos;)
+
+    compile &apos;com.jakewharton:butterknife:8.4.0&apos;
+    apt &apos;com.jakewharton:butterknife-compiler:8.4.0&apos;
+}
+</code></pre><h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><p>butterKnife Zelezny</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android butterknife/" data-id="cjabwqtnl000ohhyul4ub10qi" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android Button 去掉自带阴影效果" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android Button 去掉自带阴影效果/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.663Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-Button-去掉自带阴影效果"><a href="#Android-Button-去掉自带阴影效果" class="headerlink" title="Android Button 去掉自带阴影效果"></a>Android Button 去掉自带阴影效果</h1><ol>
+<li>button添加 style=”?android:attr/borderlessButtonStyle”</li>
+<li>button 的style添加parent parent=”@style/Widget.AppCompat.Button.Borderless”</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android Button 去掉自带阴影效果/" data-id="cjabwqtlw0003hhyuw9b17t98" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android App 常用图标尺寸规范" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android App 常用图标尺寸规范/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.655Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-App-常用图标尺寸规范"><a href="#Android-App-常用图标尺寸规范" class="headerlink" title="Android,App 常用图标尺寸规范"></a>Android,App 常用图标尺寸规范</h1><h2 id="程序启动图标-Logo-："><a href="#程序启动图标-Logo-：" class="headerlink" title="程序启动图标(Logo)："></a>程序启动图标(Logo)：</h2><p>小屏ldpi() 36 x 36 px。</p>
+<p>中屏mdpi(160dpi):48*48px</p>
+<p>大屏hdpi(240dpi):72*72px</p>
+<p>特大屏xhdpi(320dpi):96*96px</p>
+<p>超大屏xxhdpi(480dpi):144*144px</p>
+<h2 id="底部菜单图标"><a href="#底部菜单图标" class="headerlink" title="底部菜单图标"></a>底部菜单图标</h2><p>中屏mdpi(160dpi):48*48px</p>
+<p>大屏hdpi(240dpi):72*72px</p>
+<p>特大屏xhdpi(320dpi):96*96px</p>
+<p>超大屏xxhdpi(480dpi):144*144px</p>
+<ol>
+<li>大屏:</li>
+<li>完整图片（红色）: 72 x 72 px</li>
+<li>图标（蓝色）: 48 x 48 px</li>
+<li><p>图标外边框（粉色）: 44 x 44 px</p>
+</li>
+<li><p>中屏:</p>
+</li>
+<li>完整图片: 48 x 48 px</li>
+<li>图标: 32 x 32 px</li>
+<li><p>图标外边框: 30 x 30 px</p>
+</li>
+<li><p>小屏:</p>
+</li>
+<li>完整图片: 36 x 36 px</li>
+<li>图标: 24 x 24 px</li>
+<li>图标外边框: 22 x 22 px</li>
+</ol>
+<h2 id="弹出对话框顶部图标"><a href="#弹出对话框顶部图标" class="headerlink" title="弹出对话框顶部图标"></a>弹出对话框顶部图标</h2><p>小屏 24 x 24 px Low density screen (ldpi)</p>
+<p>中屏mdpi(160dpi):32*32px</p>
+<p>大屏hdpi(240dpi):48*48px</p>
+<p>特大屏xhdpi(320dpi):72*72px</p>
+<p>超大屏xxhdpi(480dpi):89*89px</p>
+<h2 id="列表内部列表项图标"><a href="#列表内部列表项图标" class="headerlink" title="列表内部列表项图标"></a>列表内部列表项图标</h2><p>小屏 24 x 24 px Low density screen (ldpi)</p>
+<p>中屏mdpi(160dpi):32*32px</p>
+<p>大屏hdpi(240dpi):48*48px</p>
+<p>特大屏xhdpi(320dpi):72*72px</p>
+<p>超大屏xxhdpi(480dpi):89*89px</p>
+<h2 id="底部或顶部tab标签图标"><a href="#底部或顶部tab标签图标" class="headerlink" title="底部或顶部tab标签图标"></a>底部或顶部tab标签图标</h2><p>小屏(ldpi) screens:<br>　　完整图片: 24 x 24 px<br>　　图标: 22 x 22 px</p>
+<p>中屏mdpi(160dpi):</p>
+<p>　　完整图片: 32*32px</p>
+<p>　　图标:28*28px</p>
+<p>大屏hdpi(240dpi):</p>
+<p>　　完整图片: 48*48px</p>
+<p>　　图标:42*42px</p>
+<p>特大屏xhdpi(320dpi):</p>
+<p>　　完整图片: 72*72px</p>
+<p>　　图标:42*42px</p>
+<p>超大屏xxhdpi(480dpi):</p>
+<p>　　完整图片: 32*32px</p>
+<p>　　图标:42*42px</p>
+<h2 id="底部状态栏图标"><a href="#底部状态栏图标" class="headerlink" title="底部状态栏图标"></a>底部状态栏图标</h2><p>小屏ldpi (120 dpi) 18 x 18 px</p>
+<p>中屏mdpi(160dpi):24*24px</p>
+<p>大屏hdpi(240dpi):36*36px</p>
+<p>特大屏xhdpi(320dpi):48*48px</p>
+<p>超大屏xxhdpi(480dpi):60*60px</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.cnblogs.com/libertycode/p/5666088.html" target="_blank" rel="noopener">Android,App 常用图标尺寸规范</a></p>
+<p><a href="http://www.jianshu.com/p/913943d25829" target="_blank" rel="noopener">详解Android开发中常用的 DPI / DP / SP</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android App 常用图标尺寸规范/" data-id="cjabwqtlv0002hhyub4xr0aea" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android 7.0 调用系统照相功能 应用崩溃" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android 7.0 调用系统照相功能 应用崩溃/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.647Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-7-0-调用系统照相功能-应用崩溃"><a href="#Android-7-0-调用系统照相功能-应用崩溃" class="headerlink" title="Android 7.0 调用系统照相功能 应用崩溃"></a>Android 7.0 调用系统照相功能 应用崩溃</h1><h2 id="android-os-FileUriExposedException-file-storage-emulated-0-XXX-jpg-exposed-beyond-app-through-Intent-getData"><a href="#android-os-FileUriExposedException-file-storage-emulated-0-XXX-jpg-exposed-beyond-app-through-Intent-getData" class="headerlink" title="android.os.FileUriExposedException: file:////storage/emulated/0/XXX.jpg exposed beyond app through Intent.getData()"></a>android.os.FileUriExposedException: file:////storage/emulated/0/XXX.jpg exposed beyond app through Intent.getData()</h2><h2 id="Failed-to-find-configured-root-that-contains-storage-emulated-0-Android-data-com-xinhong-analysis-files"><a href="#Failed-to-find-configured-root-that-contains-storage-emulated-0-Android-data-com-xinhong-analysis-files" class="headerlink" title="Failed to find configured root that contains /storage/emulated/0/Android/data/com.xinhong.analysis/files"></a>Failed to find configured root that contains /storage/emulated/0/Android/data/com.xinhong.analysis/files</h2><p>Log.e(TAG, “selectFileFromLocal: “+ filesDir.getAbsolutePath() ); </p>
+<p>？？？？？</p>
+<p>selectFileFromLocal: /data/user/0/com.xinhong.analysis/files</p>
+<p>代码：<br>File filesDir = getActivity().getFilesDir();<br>//        File filesDir = Environment.getExternalStorageDirectory();<br>        if (filesDir == null || !filesDir.exists()) {<br>            ToastUtils.showToast(getActivity(), “file open failed”);<br>            return;<br>        }<br>        Uri fileUri = FileProvider.getUriForFile(getActivity(), “com.xinhong.analysis.fileprovider”, filesDir);<br>        Log.e(TAG, “selectFileFromLocal: “+ filesDir.getAbsolutePath() );</p>
+<pre><code>Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+intent.addCategory(Intent.CATEGORY_DEFAULT);
+intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+intent.setDataAndType(fileUri, &quot;file/*&quot;);
+
+startActivity(intent);
+</code></pre><p>清单文件：</p>
+  <provider android:authorities="com.xinhong.analysis.fileprovider" android:name="android.support.v4.content.FileProvider" android:exported="false" android:granturipermissions="true"><br><br>            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"></meta-data><br>        </provider>
+
+<p>xml/file_paths</p>
+<p>&lt;?xml version=”1.0” encoding=”utf-8”?&gt;</p>
+<paths><br>    <files_path name="file" path=""></files_path><br></paths>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android 7.0 调用系统照相功能 应用崩溃/" data-id="cjabwqtls0001hhyu97nu367u" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Andoid studio 更改包名" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Andoid studio 更改包名/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.639Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Andoid-studio-更改包名"><a href="#Andoid-studio-更改包名" class="headerlink" title="Andoid studio 更改包名"></a>Andoid studio 更改包名</h1><p>在 Android studio 所建工程中，左侧 Project 选项卡中有 Project 、 Android 、 Packages 等选项， 选择 Project 即可。</p>
+<p>第一步：在 Project 选项右侧有个类似齿轮的图片， 点击后可任选以下两种操作</p>
+<ol>
+<li>如果勾选的是 Flatten Packages， 需要取消勾选的 Hide Empty Middle Packages, 这样可以将所有包依次显示出来，需要修改那个名字则选中该位置右键 Refactor -&gt; Rename 更改即可</li>
+<li>如果是取消勾选的 Flatten Packages，需要取消勾选的 Compact Empty Middle Packages， 这样可以将所有包依次阶梯状显示出来，需要修改那个名字则选中该位置右键 Refactor -&gt; Rename 更改即可</li>
+</ol>
+<p><strong>注意：只能修改最后一级的名称</strong></p>
+<p>如果想要添加一级名称，需要显示上面介绍的显示结构后， 右键 New -&gt; Package 新建后，将下级移动到新建名称下</p>
+<p>第二步：build.gradle(module：APP名字)文件中的 applicationId 改成之后的包名 (可以在 manifest 的根节点下直接复制 package )</p>
+<p>第三步： clean 和 bebuild</p>
+<p>第四步： 可能需要重启 studio</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.cnblogs.com/Kyouhui/p/4632813.html" target="_blank" rel="noopener">Android Studio 修改包名最便捷做法</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Andoid studio 更改包名/" data-id="cjabwqtln0000hhyuwrailuw3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ubutun 搭建 hexo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/22/ubutun 搭建 hexo/" class="article-date">
+  <time datetime="2017-11-22T09:37:39.664Z" itemprop="datePublished">2017-11-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/22/ubutun 搭建 hexo/">ubuntu 搭建 hexo</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="安装-Node-js"><a href="#安装-Node-js" class="headerlink" title="安装 Node.js"></a>安装 Node.js</h2><pre><code>sudo add-apt-repository ppa:chris-lea/node.js
+sudo apt-get update
+sudo apt-get install nodejs
+</code></pre><h2 id="安装-Git"><a href="#安装-Git" class="headerlink" title="安装 Git"></a>安装 Git</h2><pre><code>sudo apt-get install git
+</code></pre><h2 id="安装-npm"><a href="#安装-npm" class="headerlink" title="安装 npm"></a>安装 npm</h2><pre><code>sudo apt-get install npm
+</code></pre><h2 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h2><pre><code>sudo npm install hexo -g
+(安装半天装不上，更换了命令  
+sudo npm install hexo-cli -g
+npm install hexo –save)
+</code></pre><h2 id="初始你博客的根目录（或者cd到指定目录下，然后执行hexo-init）"><a href="#初始你博客的根目录（或者cd到指定目录下，然后执行hexo-init）" class="headerlink" title="初始你博客的根目录（或者cd到指定目录下，然后执行hexo init）"></a>初始你博客的根目录（或者cd到指定目录下，然后执行hexo init）</h2><pre><code>hexo init &lt;dir&gt; 
+</code></pre><h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><pre><code>npm install
+</code></pre><h2 id="本地查看"><a href="#本地查看" class="headerlink" title="本地查看"></a>本地查看</h2><pre><code>hexo server
+在浏览器中输入localhost:4000即可看到效果
+</code></pre><h2 id="生成静态网站"><a href="#生成静态网站" class="headerlink" title="生成静态网站"></a>生成静态网站</h2><pre><code>hexo generate
+</code></pre><h2 id="关联github"><a href="#关联github" class="headerlink" title="关联github"></a>关联github</h2><h3 id="创建代码仓库"><a href="#创建代码仓库" class="headerlink" title="创建代码仓库"></a>创建代码仓库</h3><pre><code>进入自己的账号后，左上角有个“+”，点击可选择“New repository” 进入 Create a new repository页面
+Repository name 一定要写 XXX.github.io(XXX是账号名称)
+Description 随便写
+免费的只能选 Prblic
+勾选 Initialize this repository with a README
+Add a license: 先随便选个，我选的GUN General Public License v3.0
+最后点击 Create repository
+</code></pre><h3 id="设置站点主题"><a href="#设置站点主题" class="headerlink" title="设置站点主题"></a>设置站点主题</h3><pre><code>在XXX.github.io的repository下点击settings,在下面的内容中选择“GitHub Pages”中“Automatic Page Generator”的“Launch Automatic Page Generator”，进入主页设计页面
+
+点选“README.md load”，点击 “Continue To Layouts”，选择模板样式，点击左上角的 “Publish page” 发布页面
+</code></pre><h3 id="配置SSH"><a href="#配置SSH" class="headerlink" title="配置SSH"></a>配置SSH</h3><pre><code>让本地git项目与远程github相关联
+安装git后，也带了ssh
+输入 ssh-keygen -t rsa 接着接着连续三个回车键（不需要输入密码）
+在打印的信息中可以看到生成的id_rsa 和 id_rsa.pub 以及它们所在的路径
+在最原始的github网页中，点击左上角，有个向下箭头，点击“settings”
+在左侧点击 “SSH and GPG keys”
+接着右上角点击“ New SSH key”
+tilte不用写
+把id_rsa.pub里面的内容全部复制到Key里面
+点击“ Add SSH key”，即可完成
+之后会给你注册的邮箱发送相关信息，不用管
+
+可在git中输入 ssh -T git@github.com 测试，有“successful”字样就成功了
+</code></pre><h2 id="编辑文章"><a href="#编辑文章" class="headerlink" title="编辑文章"></a>编辑文章</h2><h3 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h3><pre><code>hexo new “标题”
+</code></pre><p>在 _posts 目录下会生成文件标题.md</p>
+<p>title: Hello World<br>date: 2015-07-30 07:56:29 #发表日期，一般不改动<br>categories: hexo #文章文类<br>tags: [hexo,github] #文章标签，多于一项时用这种格式<br>正文，使用Markdown语法书写</p>
+<h3 id="编辑完后保存-预览"><a href="#编辑完后保存-预览" class="headerlink" title="编辑完后保存, 预览"></a>编辑完后保存, 预览</h3><pre><code>hexo server
+</code></pre><h2 id="hexo-部署"><a href="#hexo-部署" class="headerlink" title="hexo 部署"></a>hexo 部署</h2><pre><code>执行下列指令完成部署
+npm install hexo-deployer-git --save
+hexo generate
+hexo deploy
+</code></pre><h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="hexo无法上传到github"><a href="#hexo无法上传到github" class="headerlink" title="hexo无法上传到github"></a>hexo无法上传到github</h3><p>终于找到原因了，真的坑，在_config.yml中名/值中要有空格例如：type：（空格）git，虽然之前在万能的谷歌搜索了，但是关键词没有用对，这个检索就出来了，<a href="https://github.com/hexojs/hexo/issues/1154" target="_blank" rel="noopener">https://github.com/hexojs/hexo/issues/1154</a></p>
+<p>我真是醉了。<br>ps。最新版的hexo貌似要在第一次hexo d的之前，要有npm install hexo-deployer-git –save具体看链接描述<br>如果你碰到问题了我发现他们的官方github的issue上一搬都能找到答案，真心建议，遇到问题就上这里就行了</p>
+<h2 id="如何解决github-Hexo的博客多终端同步问题"><a href="#如何解决github-Hexo的博客多终端同步问题" class="headerlink" title="如何解决github+Hexo的博客多终端同步问题"></a>如何解决github+Hexo的博客多终端同步问题</h2><h3 id="在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname-github-io的hexo分支上"><a href="#在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname-github-io的hexo分支上" class="headerlink" title="在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname.github.io的hexo分支上"></a>在其中一个终端操作，push本地文件夹Hexo中的必要文件到yourname.github.io的hexo分支上</h3><pre><code>git init  //初始化本地仓库
+git add source //将必要的文件依次添加，有些文件夹如npm install产生的node_modules由于路径过长不好处理，所以这里没有用`git add .`命令了，而是依次添加必要文件，如下图所示
+git commit -m &quot;Blog Source Hexo&quot;
+git branch hexo  //新建hexo分支
+git checkout hexo  //切换到hexo分支上
+git remote add origin git@github.com:yourname/yourname.github.io.git  //将本地与Github项目对接
+git push origin hexo  //push到Github项目的hexo分支上
+</code></pre><p>这样你的github项目中就会多出一个Hexo分支，这个就是用于多终端同步关键的部分。</p>
+<h3 id="另一终端完成clone和push更新"><a href="#另一终端完成clone和push更新" class="headerlink" title="另一终端完成clone和push更新"></a>另一终端完成clone和push更新</h3><p>此时在另一终端更新博客，只需要将Github的hexo分支clone下来，进行初次的相关配置</p>
+<pre><code>git clone -b hexo git@github.com:yourname/yourname.github.io.git  //将Github中hexo分支clone到本地
+cd  yourname.github.io  //切换到刚刚clone的文件夹内
+npm install    //注意，这里一定要切换到刚刚clone的文件夹内执行，安装必要的所需组件，不用再init
+hexo new post &quot;new blog name&quot;   //新建一个.md文件，并编辑完成自己的博客内容
+git add source  //经测试每次只要更新sorcerer中的文件到Github中即可，因为只是新建了一篇新博客
+git commit -m &quot;XX&quot;
+git push origin hexo  //更新分支
+hexo d -g   //push更新完分支之后将自己写的博客对接到自己搭的博客网站上，同时同步了Github中的master
+</code></pre><h3 id="不同终端间愉快地玩耍"><a href="#不同终端间愉快地玩耍" class="headerlink" title="不同终端间愉快地玩耍"></a>不同终端间愉快地玩耍</h3><p>在不同的终端已经做完配置，就可以愉快的分享自己更新的博客<br>进入自己相应的文件夹</p>
+<pre><code>git pull origin hexo  //先pull完成本地与远端的融合
+hexo new post &quot; new blog name&quot;
+git add source
+git commit -m &quot;XX&quot;
+git push origin hexo
+hexo d -g
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/kesarchen/article/details/50579550" target="_blank" rel="noopener"> ubuntu下使用hexo搭建博客</a></p>
+<p><a href="http://www.jianshu.com/p/24cb74aeb0a3" target="_blank" rel="noopener">Ubuntu上用hexo建立自己的博客</a></p>
+<p><a href="http://blog.csdn.net/Monkey_LZL/article/details/60870891" target="_blank" rel="noopener">如何解决github+Hexo的博客多终端同步问题</a></p>
+<p><a href="https://righere.github.io/2016/10/10/install-hexo/" target="_blank" rel="noopener">搭建hexo博客并简单的实现多终端同步</a></p>
+<p><a href="http://www.jianshu.com/p/a0a27d840992" target="_blank" rel="noopener">小白教你在Ubuntu上用Hexo搭建博客托管到github</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/22/ubutun 搭建 hexo/" data-id="cjabwqtoj001lhhyuxitix0j7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/22/hello-world/" class="article-date">
+  <time datetime="2017-11-22T07:49:09.575Z" itemprop="datePublished">2017-11-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/22/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/22/hello-world/" data-id="cjabwqto50014hhyukn9wlbpj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

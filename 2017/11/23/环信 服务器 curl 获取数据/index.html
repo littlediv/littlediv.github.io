@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="环信 服务器 curl 获取数据使用 APP 的 client_id 和 client_secret 获取授权管理员 tokenclient_id 和 client_secret 可以在环信管理后台的 APP 详情页面看到。 Path: /{org_name}/{app_name}/token HTTP Method:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/环信 服务器 curl 获取数据/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="环信 服务器 curl 获取数据使用 APP 的 client_id 和 client_secret 获取授权管理员 tokenclient_id 和 client_secret 可以在环信管理后台的 APP 详情页面看到。 Path: /{org_name}/{app_name}/token HTTP Method: POST URL Params: 无 Request Headers: {“C">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.987Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="环信 服务器 curl 获取数据使用 APP 的 client_id 和 client_secret 获取授权管理员 tokenclient_id 和 client_secret 可以在环信管理后台的 APP 详情页面看到。 Path: /{org_name}/{app_name}/token HTTP Method: POST URL Params: 无 Request Headers: {“C">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-环信 服务器 curl 获取数据" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/环信 服务器 curl 获取数据/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.987Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="环信-服务器-curl-获取数据"><a href="#环信-服务器-curl-获取数据" class="headerlink" title="环信 服务器 curl 获取数据"></a>环信 服务器 curl 获取数据</h1><h2 id="使用-APP-的-client-id-和-client-secret-获取授权管理员-token"><a href="#使用-APP-的-client-id-和-client-secret-获取授权管理员-token" class="headerlink" title="使用 APP 的 client_id 和 client_secret 获取授权管理员 token"></a>使用 APP 的 client_id 和 client_secret 获取授权管理员 token</h2><p>client_id 和 client_secret 可以在环信管理后台的 APP 详情页面看到。</p>
+<p>Path: /{org_name}/{app_name}/token</p>
+<p>HTTP Method: POST</p>
+<p>URL Params: 无</p>
+<p>Request Headers: {“Content-Type”:”application/json”}</p>
+<p>Request Body: {“grant_type”: “client_credentials”,”client_id”: “{APP的client_id}”,”client_secret”: “{APP的client_secret}”}</p>
+<p>Response Body:</p>
+<pre><code>curl -i -H &quot;Content-type: application/json&quot; -X POST -d &quot;{&quot;grant_type&quot;:&quot;client_credentials&quot;,&quot;client_id&quot;:&quot;YXA6Ysu3ECPaEee6GDmvT6_jsA&quot;,&quot;client_secret&quot;:&quot;YXA6Ys_-0_cS29r2RP1ARN4RTiRrtDI&quot;}&quot; &quot;https://a1.easemob.com/1189170418115201/weatherinteraction/token&quot;
+</code></pre><p>返回数据</p>
+<blockquote>
+<p>{“access_token”:”YWMtq6CeUEEJEee0SF3TsvR-nQAAAAAAAAAAAAAAAAAAAAFiy7cQI9oR57oYOa9<br>Pr-OwAgMAAAFcPgtEYwBPGgAoGUXfVWBddrydt9KgqdjLMfy5BTnLnozJaPueaH1LyQ”,”expires_in<br>“:5180521,”application”:”62cbb710-23da-11e7-ba18-39af4fafe3b0”}</p>
+</blockquote>
+<h2 id="注册-IM-用户-单个"><a href="#注册-IM-用户-单个" class="headerlink" title="注册 IM 用户[单个]"></a>注册 IM 用户[单个]</h2><p>在 URL 指定的 org 和 APP 中创建一个新的用户，分两种模式：开放注册和授权注册。</p>
+<p>“开放注册”模式：注册环信账号时，不用携带管理员身份认证信息；</p>
+<p>“授权注册”模式：注册环信账号时，必须携带管理员身份认证信息。推荐使用“授权注册”，这样可以防止某些已经获取了注册 URL 和知晓注册流程的人恶意向服务器大量注册垃圾用户。</p>
+<h3 id="开放注册"><a href="#开放注册" class="headerlink" title="开放注册"></a>开放注册</h3><p>Path: /{org_name}/{app_name}/users<br>HTTP Method: POST<br>URL Params: 无<br>Request Headers: {“Content-Type”:”application/json”}<br>Request Body: {“username”:”${用户名}”,”password”:”${密码}”, “nickname”:”${昵称值}”}<br>注：创建用户时，username 和 password 是必须的，nickname 是可选的，这个 nickname 用于 iOS 推送。如果要在创建用户时设置 nickname，请求 body 是：{“username”:”jliu”,”password”:”123456”, “nickname”:”建国”} 这种形式，下面的示例不包含 nickname。批量注册时同此理。</p>
+<pre><code>curl -X POST -i &quot;https://a1.easemob.com/1189170418115201/weatherinteraction/users&quot; -d &quot;{\&quot;username\&quot;:\&quot;jliu\&quot;,\&quot;password\&quot;:\&quot;123456\&quot;}&quot; -H &quot;Content-Type:application/json&quot;
+</code></pre><p>返回数据</p>
+<blockquote>
+<p>{<br>  “action” : “post”,<br>  “application” : “62cbb710-23da-11e7-ba18-39af4fafe3b0”,<br>  “path” : “/users”,<br>  “uri” : “<a href="https://a1.easemob.com/1189170418115201/weatherinteraction/users" target="_blank" rel="noopener">https://a1.easemob.com/1189170418115201/weatherinteraction/users</a>“,<br>  “entities” : [ {<br>    “uuid” : “5cc2052a-4114-11e7-898d-e7d3a64a9896”,<br>    “type” : “user”,<br>    “created” : 1495694136946,<br>    “modified” : 1495694136946,<br>    “username” : “jliu”,<br>    “activated” : true<br>  } ],<br>  “timestamp” : 1495694136950,<br>  “duration” : 0,<br>  “organization” : “1189170418115201”,<br>  “applicationName” : “weatherinteraction”<br>}</p>
+</blockquote>
+<h3 id="授权注册"><a href="#授权注册" class="headerlink" title="授权注册"></a>授权注册</h3><p>一、get请求 </p>
+<p>curl “<a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a>“  如果这里的URL指向的是一个文件或者一幅图都可以直接下载到本地</p>
+<p>curl -i “<a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a>“  显示全部信息</p>
+<p>curl -l “<a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a>“ 只显示头部信息</p>
+<p>curl -v “<a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a>“ 显示get请求全过程解析</p>
+<p>wget “<a href="http://www.baidu.com&quot;也可以" target="_blank" rel="noopener">http://www.baidu.com&quot;也可以</a></p>
+<p>二、post请求</p>
+<p>curl -d “param1=value1&amp;param2=value2” “<a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a>“</p>
+<p>三、json格式的post请求</p>
+<p>curl -l -H “Content-type: application/json” -X POST -d ‘{“phone”:”13521389587”,”password”:”test”}’ <a href="http://domain/apis/users.json" target="_blank" rel="noopener">http://domain/apis/users.json</a></p>
+<p>{“error”:”json_parse”,”timestamp”:1495693952133,”duration”:0,”exception”:”org.co<br>dehaus.jackson.JsonParseException”,”error_description”:”Unexpected character (‘’<br>‘ (code 39)): expected a valid value (number, String, array, object, ‘true’, ‘fa<br>lse’ or ‘null’)\n at [Source: java.io.BufferedInputStream@649d9b47; line: 1, col<br>umn: 2]”}  发送请求时请求体不符合标准的JSON格式，服务器无法正确解析</p>
+<p>-d ‘{“phone”:”13521389587”,”password”:”test”}’ -&gt; -d “{\”phone\”:\”13521389587\”,\”password\”:\”test\”}”</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/环信 服务器 curl 获取数据/" data-id="cjabwqtof001fhhyuee99angh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/用于app指向性功能高亮的库/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/服务器 断点续传/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

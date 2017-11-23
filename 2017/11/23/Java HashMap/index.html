@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java HashMap集合类的整体架构 Abstract Collection Abstract List Abstract Sequential List Linked List     Array List   Abstract Set Hash Set Tree Set   Abstract Queue Pri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/Java HashMap/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java HashMap集合类的整体架构 Abstract Collection Abstract List Abstract Sequential List Linked List     Array List   Abstract Set Hash Set Tree Set   Abstract Queue Priority Queue       Abstract Map Hash Map">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.835Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="Java HashMap集合类的整体架构 Abstract Collection Abstract List Abstract Sequential List Linked List     Array List   Abstract Set Hash Set Tree Set   Abstract Queue Priority Queue       Abstract Map Hash Map">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java HashMap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Java HashMap/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.835Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java-HashMap"><a href="#Java-HashMap" class="headerlink" title="Java HashMap"></a>Java HashMap</h1><h2 id="集合类的整体架构"><a href="#集合类的整体架构" class="headerlink" title="集合类的整体架构"></a>集合类的整体架构</h2><ul>
+<li>Abstract Collection<ul>
+<li>Abstract List<ul>
+<li>Abstract Sequential List<ul>
+<li>Linked List  </li>
+</ul>
+</li>
+<li>Array List</li>
+</ul>
+</li>
+<li>Abstract Set<ul>
+<li>Hash Set</li>
+<li>Tree Set</li>
+</ul>
+</li>
+<li>Abstract Queue<ul>
+<li>Priority Queue</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Abstract Map<ul>
+<li>Hash Map</li>
+<li>Tree Map</li>
+</ul>
+</li>
+</ul>
+<h2 id="HashMap-详解"><a href="#HashMap-详解" class="headerlink" title="HashMap 详解"></a>HashMap 详解</h2><p>HashMap 和 HashSet 是 Java Collection Framework 的两个重要成员，其中 HashMap 是 Map 接口的常用实现类，HashSet 是 Set 接口的常用实现类。虽然 HashMap 和 HashSet 实现的接口规范不同，但它们底层的 Hash 存储机制完全一样，甚至 <strong> HashSet 本身就采用 HashMap 来实现的(使用HashMap的key来存储HashSet的值，value是一个无意义的对象) </strong></p>
+<pre><code>HashMap&lt;String , Double&gt; map = new HashMap&lt;String , Double&gt;();   
+map.put(&quot;高数&quot; , 60.0);   
+map.put(&quot;大英&quot; , 89.0);   
+map.put(&quot;大物&quot; , 78.2);   
+</code></pre><p>HashMap 采用一种所谓的“Hash 算法”来决定每个元素的存储位置。 </p>
+<p>当程序执行 map.put(“高数” , 60.0); 时，系统将调用”高数”的 hashCode() 方法得到其 hashCode 值——每个 Java 对象都有 hashCode() 方法，都可通过该方法获得它的 hashCode 值。得到这个对象的 hashCode 值之后，系统会根据该 hashCode 值来决定该元素的存储位置。 </p>
+<h2 id="HashMap-将可变对象作为Key"><a href="#HashMap-将可变对象作为Key" class="headerlink" title="HashMap 将可变对象作为Key"></a>HashMap 将可变对象作为Key</h2><h3 id="可变对象"><a href="#可变对象" class="headerlink" title="可变对象"></a>可变对象</h3><p>可变对象是指创建后自身状态能改变的对象。换句话说，可变对象是该对象在创建后它的哈希值可能被改变。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>重写hashcode 和 equal </p>
+<pre><code>@Override
+public int hashCode() {
+    int result = 17;
+    result = result * 31 + zoom;
+    result = result * 31 + x;
+    result = result * 31 + y;
+    return result;
+}
+
+@Override
+public boolean equals(Object o) {
+    if (o == this) {
+        return true;
+    }
+
+    if (!(o instanceof LevelData))
+    {
+        return false;
+    }
+
+    LevelData other = (LevelData) o;
+
+    return zoom == other.zoom &amp;&amp; x == other.x &amp;&amp; y == other.y;
+}
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.cnblogs.com/0201zcr/p/4769108.html" target="_blank" rel="noopener">java HashMap那点事</a><br><a href="http://www.cnblogs.com/0201zcr/p/4810813.html?tvd" target="_blank" rel="noopener">HashMap的key可以是可变的对象吗？？？</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Java HashMap/" data-id="cjabwqtn8000fhhyuwn4vaq27" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/java关键字static和final/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/Intent传递数据问题/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

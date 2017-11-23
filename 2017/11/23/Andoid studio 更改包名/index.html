@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Andoid studio 更改包名在 Android studio 所建工程中，左侧 Project 选项卡中有 Project 、 Android 、 Packages 等选项， 选择 Project 即可。 第一步：在 Project 选项右侧有个类似齿轮的图片， 点击后可任选以下两种操作  如果勾选的是 Fla">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/Andoid studio 更改包名/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Andoid studio 更改包名在 Android studio 所建工程中，左侧 Project 选项卡中有 Project 、 Android 、 Packages 等选项， 选择 Project 即可。 第一步：在 Project 选项右侧有个类似齿轮的图片， 点击后可任选以下两种操作  如果勾选的是 Flatten Packages， 需要取消勾选的 Hide Empty Middle">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.639Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="Andoid studio 更改包名在 Android studio 所建工程中，左侧 Project 选项卡中有 Project 、 Android 、 Packages 等选项， 选择 Project 即可。 第一步：在 Project 选项右侧有个类似齿轮的图片， 点击后可任选以下两种操作  如果勾选的是 Flatten Packages， 需要取消勾选的 Hide Empty Middle">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Andoid studio 更改包名" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Andoid studio 更改包名/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.639Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Andoid-studio-更改包名"><a href="#Andoid-studio-更改包名" class="headerlink" title="Andoid studio 更改包名"></a>Andoid studio 更改包名</h1><p>在 Android studio 所建工程中，左侧 Project 选项卡中有 Project 、 Android 、 Packages 等选项， 选择 Project 即可。</p>
+<p>第一步：在 Project 选项右侧有个类似齿轮的图片， 点击后可任选以下两种操作</p>
+<ol>
+<li>如果勾选的是 Flatten Packages， 需要取消勾选的 Hide Empty Middle Packages, 这样可以将所有包依次显示出来，需要修改那个名字则选中该位置右键 Refactor -&gt; Rename 更改即可</li>
+<li>如果是取消勾选的 Flatten Packages，需要取消勾选的 Compact Empty Middle Packages， 这样可以将所有包依次阶梯状显示出来，需要修改那个名字则选中该位置右键 Refactor -&gt; Rename 更改即可</li>
+</ol>
+<p><strong>注意：只能修改最后一级的名称</strong></p>
+<p>如果想要添加一级名称，需要显示上面介绍的显示结构后， 右键 New -&gt; Package 新建后，将下级移动到新建名称下</p>
+<p>第二步：build.gradle(module：APP名字)文件中的 applicationId 改成之后的包名 (可以在 manifest 的根节点下直接复制 package )</p>
+<p>第三步： clean 和 bebuild</p>
+<p>第四步： 可能需要重启 studio</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.cnblogs.com/Kyouhui/p/4632813.html" target="_blank" rel="noopener">Android Studio 修改包名最便捷做法</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Andoid studio 更改包名/" data-id="cjabwqtln0000hhyuwrailuw3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/Android 7.0 调用系统照相功能 应用崩溃/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/22/ubutun 搭建 hexo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ubuntu 搭建 hexo</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

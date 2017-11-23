@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="json 解析（Gson）Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 36这里遇到一个比较棘手的问题，原来项目中使用的不是Gson，客户端在请求json数据时如果没有具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/json解析（GSON）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="json 解析（Gson）Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 36这里遇到一个比较棘手的问题，原来项目中使用的不是Gson，客户端在请求json数据时如果没有具体的数据内容会返回空字符串，如： {“result”:{“errorMessag">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.875Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="json 解析（Gson）Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 36这里遇到一个比较棘手的问题，原来项目中使用的不是Gson，客户端在请求json数据时如果没有具体的数据内容会返回空字符串，如： {“result”:{“errorMessag">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-json解析（GSON）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/json解析（GSON）/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.875Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="json-解析（Gson）"><a href="#json-解析（Gson）" class="headerlink" title="json 解析（Gson）"></a>json 解析（Gson）</h1><h2 id="Caused-by-java-lang-IllegalStateException-Expected-BEGIN-OBJECT-but-was-STRING-at-line-1-column-36"><a href="#Caused-by-java-lang-IllegalStateException-Expected-BEGIN-OBJECT-but-was-STRING-at-line-1-column-36" class="headerlink" title="Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 36"></a>Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 36</h2><p>这里遇到一个比较棘手的问题，原来项目中使用的不是Gson，客户端在请求json数据时如果没有具体的数据内容会返回空字符串，如：</p>
+<p>{“result”:{“errorMessage”:”用户名/密码错误”,”errorCode”:0},”data”:””}</p>
+<p>这里的data是表示没有具体的数据，但是在Gson解析时我们用来接受的数据却是具体的实体对象，bean定义如下：</p>
+<pre><code>public class Result&lt;T extends BaseEntity&gt; implements Serializable {
+
+    private static final long serialVersionUID = -645821020648740998L;
+    private Status result;
+    private T data;
+
+
+    public Status getResult() {
+        return result;
+    }
+
+    public void setResult(Status result) {
+        this.result = result;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+}
+</code></pre><p>所以这里在解析的时候就会报一个错误，大体内容是：解析到了一个String，但期望的是一个对象，start with ‘{’，也就是说我们的json应该是下面这种的：</p>
+<p>{“result”:{“errorMessage”:”用户名/密码错误”,”errorCode”:0},”data”:null}</p>
+<p>或者没有data，</p>
+<p>{“result”:{“errorMessage”:”用户名/密码错误”,”errorCode”:0}}</p>
+<p>这里无法修改服务端的代码，所以只能在客户端对获取的数据进行转换，转换的方法是：</p>
+<pre><code>JsonObject obj = new JsonParser().parse(json_str).getAsJsonObject();
+if (obj.get(&quot;data&quot;).toString().equals(&quot;\&quot;\&quot;&quot;)){
+    obj.remove(&quot;data&quot;);
+}
+Result&lt;User&gt; result;
+Gson _g = new GsonBuilder().serializeNulls().create();
+result = _g.fromJson(obj,new TypeToken&lt;Result&lt;User&gt;&gt;(){}.getType());
+</code></pre><p>通过一个中间对象，JsonObject将data为空的json去除掉相应的data项。</p>
+<p>或者直接将数据返回为空<br>    LiveInfoForGround liveInfoForHigh = null;<br>    if (response != null) {<br>        JsonObject obj = new JsonParser().parse(response).getAsJsonObject();<br>        if (obj != null &amp;&amp; obj.get(“data”).toString().equals(“\”\””)) {<br>            return null;<br>        }<br>        Gson gson = new Gson();<br>        liveInfoForHigh = gson.fromJson(response, LiveInfoForGround.class);<br>    }</p>
+<p>详见参考JsonElement使用。</p>
+<h2 id="动态解析未知字段-key-方法"><a href="#动态解析未知字段-key-方法" class="headerlink" title="动态解析未知字段 key 方法"></a>动态解析未知字段 key 方法</h2><p>json数据中的字段key是动态可变的时候，由于Gson是使用静态注解的方式来设置实体对象的，因此我们很难直接对返回的类型来判断。但Gson在解析过程中如果不知道解析的字段，就会将所有变量存储在一个Map中，我们只要实例化这个map就能动态地取出key和value了。</p>
+<p>先给出一段jsondata，这是天气预报的数据，其中day_20151002这种key是随日期而变化的，在实体类中就不能当做静态变量来处理，我们就通过map来取出其映射对象。</p>
+<p>代码</p>
+<pre><code>{ &quot;resultcode&quot;:&quot;200&quot;,&quot;reason&quot;:&quot;successed!&quot;,  
+&quot;result&quot;:{  
+        &quot;sk&quot;:{  
+             &quot;temp&quot;:&quot;24&quot;,&quot;wind_direction&quot;:&quot;东北风&quot;,&quot;wind_strength&quot;:&quot;2级&quot;,&quot;humidity&quot;:&quot;28%&quot;,&quot;time&quot;:&quot;17:38&quot;  
+              },  
+     &quot;today&quot;:{  
+             &quot;temperature&quot;:&quot;15℃~26℃&quot;,&quot;weather&quot;:&quot;多云转晴&quot;,&quot;wind&quot;:&quot;东北风微风&quot;,&quot;week&quot;:&quot;星期日&quot;,&quot;city&quot;:&quot;桂林&quot;,&quot;date_y&quot;:&quot;2015年10月11日&quot;,&quot;dressing_index&quot;:&quot;舒适&quot;,&quot;dressing_advice&quot;:&quot;建议着长袖T恤、衬衫加单裤等服装。年老体弱者宜着针织长袖衬衫、马甲和长裤。&quot;,&quot;uv_index&quot;:&quot;弱&quot;,&quot;comfort_index&quot;:&quot;&quot;,&quot;wash_index&quot;:&quot;较适宜&quot;,&quot;travel_index&quot;:&quot;较适宜&quot;,&quot;exercise_index&quot;:&quot;较适宜&quot;,&quot;drying_index&quot;:&quot;&quot;  
+             },  
+    &quot;future&quot;:{  
+             &quot;day_20151011&quot;:{&quot;temperature&quot;:&quot;15℃~26℃&quot;,&quot;weather&quot;:&quot;多云转晴&quot;,&quot;wind&quot;:&quot;东北风微风&quot;,&quot;week&quot;:&quot;星期日&quot;,&quot;date&quot;:&quot;20151011&quot;},  
+             &quot;day_20151012&quot;:{&quot;temperature&quot;:&quot;16℃~27℃&quot;,&quot;weather&quot;:&quot;晴转多云&quot;,&quot;wind&quot;:&quot;微风&quot;,&quot;week&quot;:&quot;星期一&quot;,&quot;date&quot;:&quot;20151012&quot;},  
+             &quot;day_20151013&quot;:{&quot;temperature&quot;:&quot;16℃~26℃&quot;,&quot;weather&quot;:&quot;多云转晴&quot;,&quot;wind&quot;:&quot;微风&quot;,&quot;week&quot;:&quot;星期二&quot;,&quot;date&quot;:&quot;20151013&quot;},  
+             &quot;day_20151014&quot;:{&quot;temperature&quot;:&quot;17℃~27℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期三&quot;,&quot;date&quot;:&quot;20151014&quot;},  
+             &quot;day_20151015&quot;:{&quot;temperature&quot;:&quot;17℃~28℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期四&quot;,&quot;date&quot;:&quot;20151015&quot;},  
+             &quot;day_20151016&quot;:{&quot;temperature&quot;:&quot;17℃~30℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期五&quot;,&quot;date&quot;:&quot;20151016&quot;},  
+             &quot;day_20151017&quot;:{&quot;temperature&quot;:&quot;17℃~30℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期六&quot;,&quot;date&quot;:&quot;20151017&quot;}  
+             }  
+          },  
+&quot;error_code&quot;:0  
+}  
+</code></pre><p>javaBean 代码</p>
+<pre><code>public class Response {
+    public String resultcode;
+    public String reason;
+    public ResultBean result;
+    public int error_code;
+
+    public static class ResultBean {
+
+        public SkBean sk;
+        public TodayBean today;
+        public Map&lt;String,FutureBean&gt; future;
+
+        public static class SkBean {
+            public String temp;
+            public String wind_direction;
+            public String wind_strength;
+            public String humidity;
+            public String time;        
+        }
+
+        public static class TodayBean {
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String city;
+            public String date_y;
+            public String dressing_index;
+            public String dressing_advice;
+            public String uv_index;
+            public String comfort_index;
+            public String wash_index;
+            public String travel_index;
+            public String exercise_index;
+            public String drying_index;
+
+
+        }
+
+        public static class FutureBean {
+
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String date;
+
+
+        }
+    }
+}
+</code></pre><p>注： android studio 中使用插件时（ 类 右键 –&gt; generate –&gt; GsonFormat ）时由于day_20151002这种key是随日期而变化的，而 gson 只作静态变量方式解析，会出现以下情况：</p>
+<pre><code>public FutureBean future;
+
+public static class FutureBean {
+        public Day20151011Bean day_20151011;
+
+        public static class Day20151011Bean {
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String date;
+
+        }
+
+    }
+</code></pre><p>需要更改为 </p>
+<pre><code>public Map&lt;String,FutureBean&gt; future;
+public static class FutureBean {
+        public String temperature;
+        public String weather;
+        public String wind;
+        public String week;
+        public String date;
+
+
+    }
+</code></pre><p>最后的 bean 格式为：</p>
+<pre><code>public class Response {
+    public String resultcode;
+    public String reason；
+    public ResultBean result;
+    public int error_code;
+
+    public static class ResultBean {
+
+        public SkBean sk;
+        public TodayBean today;
+        public Map&lt;String,FutureBean&gt; future;
+
+        public static class SkBean {
+            public String temp;
+            public String wind_direction;
+            public String wind_strength;
+            public String humidity;
+            public String time;
+
+
+        }
+
+        public static class TodayBean {
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String city;
+            public String date_y;
+            public String dressing_index;
+            public String dressing_advice;
+            public String uv_index;
+            public String comfort_index;
+            public String wash_index;
+            public String travel_index;
+            public String exercise_index;
+            public String drying_index;
+
+
+        }
+
+        public static class FutureBean {
+
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String date;
+
+
+        }
+    }
+}
+</code></pre><ol>
+<li><p>原始 jsonObject 和 jsonArray 解析</p>
+<pre><code>Response response = null;
+try {
+    JSONObject jsonObject = new JSONObject(json);
+    if (jsonObject != null) {
+        response = new Response();
+        String resultcode = jsonObject.optString(&quot;resultcode&quot;);
+        String reason = jsonObject.optString(&quot;reason&quot;);
+        int error_code = jsonObject.optInt(&quot;error_code&quot;);
+
+        response.resultcode = resultcode;
+        response.reason = reason;
+        response.error_code = error_code;
+
+        JSONObject reslut = jsonObject.optJSONObject(&quot;result&quot;);
+        // reslut.length() &gt; 0 可防止 &quot;result&quot;:&quot;&quot; 这种情况
+        if (reslut != null &amp;&amp; reslut.length() &gt; 0) {
+            Response.ResultBean resultBean = new Response.ResultBean();
+
+            JSONObject sk = reslut.optJSONObject(&quot;sk&quot;);
+            if (sk != null) {
+                Response.ResultBean.SkBean skBean = new Response.ResultBean.SkBean();
+                String temp = sk.optString(&quot;temp&quot;);
+                String wind_direction = sk.optString(&quot;wind_direction&quot;);
+                skBean.temp = temp;
+                skBean.wind_direction = wind_direction;
+
+                resultBean.sk = skBean;
+            }
+</code></pre></li>
+</ol>
+<pre><code>            JSONObject today = reslut.optJSONObject(&quot;today&quot;);
+            if (today != null) {
+                Response.ResultBean.TodayBean todayBean = new Response.ResultBean.TodayBean();
+                String temperature = today.optString(&quot;temperature&quot;);
+                String weather = today.optString(&quot;weather&quot;);
+                todayBean.temperature = temperature;
+                todayBean.weather = weather;
+
+                resultBean.today = todayBean;
+            }
+
+            JSONObject future = reslut.optJSONObject(&quot;future&quot;);
+            if (future != null) {
+                HashMap&lt;String, Response.ResultBean.FutureBean&gt; futureBeanHashMap = new HashMap&lt;&gt;();
+
+                Iterator&lt;String&gt; keys = future.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    JSONObject futureItem = future.optJSONObject(key);
+                    if (futureItem != null) {
+                        Response.ResultBean.FutureBean futureBean = new Response.ResultBean.FutureBean();
+                        String temperature = futureItem.optString(&quot;temperature&quot;);
+                        String weather = futureItem.optString(&quot;weather&quot;);
+                        futureBean.temperature = temperature;
+                        futureBean.weather = weather;
+                        futureBeanHashMap.put(key, futureBean);
+                    }
+
+                }
+                resultBean.future = futureBeanHashMap;
+
+            }
+
+            response.result = resultBean;
+        }
+
+    }
+
+} catch (JSONException e) {
+    e.printStackTrace();
+}
+</code></pre><ol>
+<li>gson 解析</li>
+</ol>
+<pre><code>Gson gson = new Gson();    
+Response response = gson.fromJson(json, Response.class);
+</code></pre><p>很方便</p>
+<h2 id="服务器-json-格式不标准-本来是-“data”-，-服务器-有时候返回-“data”-””-…"><a href="#服务器-json-格式不标准-本来是-“data”-，-服务器-有时候返回-“data”-””-…" class="headerlink" title="服务器 json 格式不标准( 本来是 “data”:{} ， 服务器 有时候返回 “data”:””   ….)"></a>服务器 json 格式不标准( 本来是 “data”:{} ， 服务器 有时候返回 “data”:””   ….)</h2><pre><code>public static LiveInfo handleLiveInfo(String response) {
+    LiveInfo liveInfo = null;
+    if (response != null) {
+        JsonObject obj = new JsonParser().parse(response).getAsJsonObject();
+        // 防止 &quot;data&quot;:&quot;&quot; 时 gson 格式报错 (BEGIN_WITH ....)
+        if (obj != null &amp;&amp; obj.get(&quot;data&quot;).toString().equals(&quot;\&quot;\&quot;&quot;)) {
+            return null;
+        }
+        Gson gson = new Gson();
+        liveInfo = gson.fromJson(response, LiveInfo.class);
+    }
+
+    return liveInfo;
+}
+</code></pre><h2 id="Gson解析（List和Map）格式json数据"><a href="#Gson解析（List和Map）格式json数据" class="headerlink" title="Gson解析（List和Map）格式json数据"></a>Gson解析（List和Map）格式json数据</h2><pre><code>public class jsonParse{  
+
+
+
+class City{  
+
+    int id;  
+
+    String name;  
+
+    String code;  
+
+    String map;  
+
+}  
+
+
+public static void main(String[] args) {  
+
+    //列表/array 数据  
+
+             String str=&quot;[{&apos;id&apos;: &apos;1&apos;,&apos;code&apos;: &apos;bj&apos;,&apos;name&apos;: &apos;北京&apos;,&apos;map&apos;: &apos;39.90403, 116.40752599999996&apos;}, {&apos;id&apos;: &apos;2&apos;,&apos;code&apos;: &apos;sz&apos;,&apos;name&apos;: &apos;深圳&apos;,&apos;map&apos;: &apos;22.543099, 114.05786799999998&apos;}, {&apos;id&apos;: &apos;9&apos;,&apos;code&apos;: &apos;sh&apos;,&apos;name&apos;: &apos;上海&apos;,&apos;map&apos;: &apos;31.230393,121.473704&apos;}, {&apos;id&apos;: &apos;10&apos;,&apos;code&apos;: &apos;gz&apos;,&apos;name&apos;: &apos;广州&apos;,&apos;map&apos;: &apos;23.129163,113.26443500000005&apos;}]&quot;;  
+
+    Gson gson=new Gson();  
+
+    List&lt;City&gt; rs=new ArrayList&lt;City&gt;();  
+
+     Type type = new TypeToken&lt;ArrayList&lt;City&gt;&gt;() {}.getType();  
+
+      rs=gson.fromJson(str, type);  
+
+      for(City o:rs){  
+
+              System.out.println(o.name);  
+
+      }  
+
+
+
+      //map数据  
+
+      String jsonStr=&quot;{&apos;1&apos;: {&apos;id&apos;: &apos;1&apos;,&apos;code&apos;: &apos;bj&apos;,&apos;name&apos;: &apos;北京&apos;,&apos;map&apos;: &apos;39.90403, 116.40752599999996&apos;},&apos;2&apos;: {&apos;id&apos;: &apos;2&apos;,&apos;code&apos;: &apos;sz&apos;,&apos;name&apos;: &apos;深圳&apos;,&apos;map&apos;: &apos;22.543099, 114.05786799999998&apos;},&apos;9&apos;: {&apos;id&apos;: &apos;9&apos;,&apos;code&apos;: &apos;sh&apos;,&apos;name&apos;: &apos;上海&apos;,&apos;map&apos;: &apos;31.230393,121.473704&apos;},&apos;10&apos;: {&apos;id&apos;: &apos;10&apos;,&apos;code&apos;: &apos;gz&apos;,&apos;name&apos;: &apos;广州&apos;,&apos;map&apos;: &apos;23.129163,113.26443500000005&apos;}}&quot;;  
+
+      Map&lt;String, City&gt; citys = gson.fromJson(jsonStr, new TypeToken&lt;Map&lt;String, City&gt;&gt;() {}.getType());   
+
+      System.out.println(citys.get(&quot;1&quot;).name+&quot;----------&quot;+citys.get(&quot;2&quot;).code);  
+
+}  
+
+}  
+</code></pre><h2 id="json-中-key-包含中文"><a href="#json-中-key-包含中文" class="headerlink" title="json 中 key 包含中文"></a>json 中 key 包含中文</h2><pre><code>{&quot;ret&quot;:0,
+    &quot;response&quot;:{
+        &quot;tag_category&quot;:{
+            &quot;中国画&quot;:{
+                &quot;年代&quot;:[&quot;先秦两汉&quot;,&quot;战国楚国&quot;,&quot;魏晋南北&quot;,&quot;隋唐五代&quot;,&quot;南宋北宋&quot;,&quot;元代&quot;,&quot;明清&quot;,&quot;近现代&quot;,&quot;年代不详&quot;,&quot;其他&quot;],
+                &quot;技法&quot;:[&quot;泼墨&quot;,&quot;工笔&quot;,&quot;写意&quot;,&quot;白描&quot;,&quot;写生&quot;,&quot;皴法&quot;,&quot;没骨&quot;,&quot;指头画&quot;,&quot;其他&quot;],
+
+            },
+            &quot;书法&quot;:{
+                &quot;分类&quot;:[&quot;书法&quot;,&quot;碑帖&quot;,&quot;写本写经&quot;,&quot;书札文牍&quot;,&quot;其他&quot;],
+                &quot;书体&quot;:[&quot;篆书&quot;,&quot;隶书&quot;,&quot;楷书&quot;,&quot;草书&quot;,&quot;行书&quot;,&quot;其他&quot;],
+
+            },
+
+        }
+    }
+}
+</code></pre><p>Json字段里面的Key存在中文，所以必须在相应的字段上使用@SerializedName(“中国画”)注解，给Key取别名。</p>
+<p>如下：</p>
+<pre><code> @SerializedName(&quot;中国画&quot;)
+public ChinaPicture chinaPicture;
+/**
+     * 中国画
+ */
+public static class ChinaPicture {
+    @SerializedName(&quot;年代&quot;)
+    public List&lt;String&gt; years;
+    @SerializedName(&quot;技法&quot;)
+    public List&lt;String&gt; techniques;
+    @SerializedName(&quot;题材&quot;)
+    public List&lt;String&gt; topic;
+    @SerializedName(&quot;规格&quot;)
+    public List&lt;String&gt; specification;
+}
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/chaosminds/article/details/49049455" target="_blank" rel="noopener">Gson解析JSON中动态未知字段key的方法</a><br><a href="http://www.bejson.com/" target="_blank" rel="noopener">在线JSON校验格式化工具(Be JSON)</a><br><a href="http://www.cnblogs.com/bianmajiang/p/3998083.html" target="_blank" rel="noopener">使用Gson解析复杂、变态的Json数据（包含中文key）</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/json解析（GSON）/" data-id="cjabwqto60016hhyuw5mt8irp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/Photoshop 快捷键/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/java 泛型 参数/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

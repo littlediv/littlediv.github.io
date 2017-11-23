@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="java 构造函数为什么创建了一个子类对象会调用其父类的构造方法代码实例： package simplejava;  class Super {     String s;     public Super() {         System.out.println(&amp;quot;Super&amp;quot;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/java 构造函数/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="java 构造函数为什么创建了一个子类对象会调用其父类的构造方法代码实例： package simplejava;  class Super {     String s;     public Super() {         System.out.println(&amp;quot;Super&amp;quot;);     } }  class Sub extends Super {     public">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.863Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="java 构造函数为什么创建了一个子类对象会调用其父类的构造方法代码实例： package simplejava;  class Super {     String s;     public Super() {         System.out.println(&amp;quot;Super&amp;quot;);     } }  class Sub extends Super {     public">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-java 构造函数" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/java 构造函数/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.863Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="java-构造函数"><a href="#java-构造函数" class="headerlink" title="java 构造函数"></a>java 构造函数</h1><h2 id="为什么创建了一个子类对象会调用其父类的构造方法"><a href="#为什么创建了一个子类对象会调用其父类的构造方法" class="headerlink" title="为什么创建了一个子类对象会调用其父类的构造方法"></a>为什么创建了一个子类对象会调用其父类的构造方法</h2><p>代码实例：</p>
+<pre><code>package simplejava;
+
+class Super {
+    String s;
+    public Super() {
+        System.out.println(&quot;Super&quot;);
+    }
+}
+
+class Sub extends Super {
+    public Sub() {
+        System.out.println(&quot;Sub&quot;);
+    }
+
+}
+
+public class Q4 {
+    public static void main(String[] args) {
+        Sub s = new Sub();
+    }
+}
+</code></pre><p>结果打印：</p>
+<pre><code>Super
+Sub
+</code></pre><p>当一个类继承了某个类时，在子类的构造方法里，super()必须先被调用；如果你没有写，编译器会自动调用super()方法，即调用了父类的构造方法；</p>
+<p>这并不是创建了两个对象，其实只有一个子类Sub对象；之所以需要调用父类的构造方法是因为在父类中，可能存在私有属性需要在其构造方法内初始化；</p>
+<p>当编译器自动插入父类构造方法的调用后，子类的构造方法类似如下代码：</p>
+<pre><code> public Sub() {
+    super();
+    System.out.println(&quot;Sub&quot;);
+}
+</code></pre><h2 id="一个常见的错误信息：Implicit-super-constructor-is-undefined-for-default-constructor"><a href="#一个常见的错误信息：Implicit-super-constructor-is-undefined-for-default-constructor" class="headerlink" title="一个常见的错误信息：Implicit super constructor is undefined for default constructor"></a>一个常见的错误信息：Implicit super constructor is undefined for default constructor</h2><pre><code>class Super{
+    String s;
+
+    public Super(String s) {
+        this.s = s;
+    }
+}
+public class Sub extends Super{
+
+    int x = 200;
+
+    public Sub() { //报错
+        System.out.println(&quot;Sub&quot;);
+    }
+
+    public Sub(String s) { //报错
+
+    }
+
+    public static void main(String[] args) {
+        Sub s = new Sub();
+    }
+}
+</code></pre><p>之所以出现这个编译错误，是因为父类的默认构造方法未定义。在Java中，如果一个类没有定义构造方法，编译器会默认插入一个无参数的构造方法；但是如果一个构造方法在父类中已定义，在这种情况，编译器是不会自动插入一个默认的无参构造方法，这正是以上demo的情况；</p>
+<p>对于子类来说，不管是无参构造方法还是有参构造方法，都会默认调用父类的无参构造方法；当编译器尝试在子类中往这两个构造方法插入super()方法时，因为父类没有一个默认的无参构造方法，所以编译器报错；</p>
+<p>要修复这个错误，很简单：</p>
+<p>1、在父类手动定义一个无参构造方法：</p>
+<pre><code>public Super(){
+    System.out.println(&quot;Super&quot;);
+}
+</code></pre><p>2、移除父类中自定义的构造方法</p>
+<p>3、在子类中自己写上父类构造方法的调用；如super(value)；</p>
+<h2 id="在子类中明确调用父类构造方法"><a href="#在子类中明确调用父类构造方法" class="headerlink" title="在子类中明确调用父类构造方法"></a>在子类中明确调用父类构造方法</h2><p>以下代码运行正常：</p>
+<pre><code>class Super{
+        String s;
+
+        public Super(String s) {
+            this.s = s;
+        }
+    }
+    public class Sub extends Super{
+
+        int x = 200;
+
+        public Sub(String s) { 
+            super(s)
+        }
+
+        public static void main(String[] args) {
+            Sub s = new Sub();
+        }
+    }
+}
+</code></pre><p>父类定义了一个有参构造方法，然后子类构造方法明确调用了父类有参构造方法；</p>
+<h2 id="规则总结"><a href="#规则总结" class="headerlink" title="规则总结"></a>规则总结</h2><p>简单的说，规则是这样的：</p>
+<p>在子类构造方法中，不管是程序员手动调用父类构造方法还是编译器自动调用，</p>
+<p>子类构造方法必须要调用父类的某个构造方法；</p>
+<p>被子类调用的父类构造方法在父类中必须是存在的；</p>
+<h2 id="一个有趣的问题"><a href="#一个有趣的问题" class="headerlink" title="一个有趣的问题"></a>一个有趣的问题</h2><p>如果一个类定义了一个有参数的构造方法，Java为什么就不提供默认的无参构造方法呢？</p>
+<p>有兴趣的可以看下stackoverflow中的回答：</p>
+<p><a href="http://stackoverflow.com/q/16046200/127859" target="_blank" rel="noopener">http://stackoverflow.com/q/16046200/127859</a></p>
+<p>译文链接：<a href="http://www.programcreek.com/2013/04/what-are-the-frequently-asked-questions-about-constructors-in-java/" target="_blank" rel="noopener">http://www.programcreek.com/2013/04/what-are-the-frequently-asked-questions-about-constructors-in-java/</a></p>
+<h2 id="为什么一定要调用父类的构造方法"><a href="#为什么一定要调用父类的构造方法" class="headerlink" title="为什么一定要调用父类的构造方法"></a>为什么一定要调用父类的构造方法</h2><ol>
+<li><p>你想吧，如果你定义了一个有参的构造函数 这时候就不会调用父类构造方法了，因为你有自己的特性了啊。如果你实例化的时候调用的是无参的构造方法当然会走父类的了，因为你没申明自己的特性</p>
+</li>
+<li><p>楼主 在创建对象的时候如果父类中的数据需要初始化，那么就必须调用，如果父类中的数据不用初始化，也就不用显示的调用了 这个就相当于 你在子类中可以使用父类的变量 但是你在子类中初始化 你不感觉多此一举吗</p>
+</li>
+<li><p>有父类就会有父类构造方法，这个是必然的。不然可能会出现空指针。<br>没父类继承时的就只要当前类的构造方法了。</p>
+</li>
+<li><p>这个是和继承有关系。子类继承父类后。在内部的存储中。子类是没有父类已经定义的那部分。所以在进行new的时候子类只是new了自己的那部分。</p>
+</li>
+<li><p>任何时候都会调用父类构造函数的吧？<br>分两种情况：<br>1.不显示调用父类构造函数，则默认调用父类的无参构造函数。如果父类声明了有参数的构造函数，而没写无参的构造函数，那么编译出错，提示父类没有默认构造函数<br>2.显示调用父类构造函数，这个简单，你知道父类的哪个构造函数就用这个构造函数初始化父类。</p>
+</li>
+<li><p>儿子有了东西吃，要先给老子吃，这位老子有了东西，得先给这位老子的老子吃…… 直到最初的上帝Object，他得到他儿子的东西，就自己吃了吧…… 你要理解成“Java教育我们要讲孝心”也可以；但要理解成交税也行；甚至理解成小弟向大哥交保护费也可以…… 呵呵~说笑了! <strong>真实的原因是：实例化的本质，是调用构造函数分配实例标识，申请内存存放实例中各成员变量的初始值。如果该类继承了某个父类，也就继承(相当于复制)了父类的所有非私有成员变量，而如果没有给继承过来的成员变量赋初值，那后续施加在该成员变量的操作如何进行？</strong></p>
+</li>
+<li><p>为什么要先调用父类的构造方法？<br>因为父类的定义的public和protected函数和变量都会自动被继承到子类中，如果父类不初始化，这些定义在父类的函数和变量怎么能在子类中使用？<br>其实，不仅先调用父类的构造方法，在调用父类的构造方法之前，还先初始化了父类的静态变量和静态块<br><strong>完整的初始化顺序是：父类静态变量 父类静态块 子类静态变量 子类静态块 父类非静态变量 父类非静态块 父类构造函数 子类非静态变量 子类非静态块 子类构造函数</strong></p>
+</li>
+<li><p>首先实例化就是给对象分配内存，构造方法就是分配内存的实现，那么，子类如何才能更方便的分配内存呢？很显然，就是调用父类构造方法来分配父类部分的内存，然后再调用自己的构造方法来分配子类扩展的内存。否则，如果子类完全从头开始自己分配内存，那么继承父类又有什么优点呢？因为子类的父类部分是完全和父类一样的，你觉得有必要再自己从头开始分配内存吗？既然父类的内存分配已经有现成的方法，为什么不直接调用来分配父类部分的内存呢？</p>
+</li>
+<li><p>子类实例隐含的包含一个父类实例，拥有一个指向父类实例的引用，当子类实例调用父类中的方法or变量，这个父类必须有一个实例，so在子类实例生成的时候，父类的实例也就生成了啊。</p>
+</li>
+</ol>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="https://www.cnblogs.com/chenpi/p/5486096.html#_label0" target="_blank" rel="noopener">关于JAVA中子类和父类的构造方法</a></p>
+<p><a href="http://bbs.csdn.net/topics/380077372" target="_blank" rel="noopener">java实例化的时候为什么一定要调用父类的构造方法 </a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/java 构造函数/" data-id="cjabwqto30012hhyuob1u64fp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/java 泛型 参数/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/java 基本数据类型 比较的问题/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

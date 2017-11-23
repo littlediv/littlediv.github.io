@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="设计模式 依赖倒置原则就是要依赖于抽象，不要依赖于具体。简单的说就是对抽象进行编程，不要对实现进行编程，这样就降低了客户与实现模块间的耦合。 面向过程的开发，上层调用下层，上层依赖于下层，当下层剧烈变化时，上层也要跟着变化，这就会导致模块的复用性降低而且大大提高了开发的成本。 面向对象的开发很好的解决了这个问题，一般的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/设计模式 依赖倒置原则/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="设计模式 依赖倒置原则就是要依赖于抽象，不要依赖于具体。简单的说就是对抽象进行编程，不要对实现进行编程，这样就降低了客户与实现模块间的耦合。 面向过程的开发，上层调用下层，上层依赖于下层，当下层剧烈变化时，上层也要跟着变化，这就会导致模块的复用性降低而且大大提高了开发的成本。 面向对象的开发很好的解决了这个问题，一般的情况下抽象的变化概率很小，让用户程序依赖于抽象，实现的细节也依赖于抽象。即使实现">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.999Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="设计模式 依赖倒置原则就是要依赖于抽象，不要依赖于具体。简单的说就是对抽象进行编程，不要对实现进行编程，这样就降低了客户与实现模块间的耦合。 面向过程的开发，上层调用下层，上层依赖于下层，当下层剧烈变化时，上层也要跟着变化，这就会导致模块的复用性降低而且大大提高了开发的成本。 面向对象的开发很好的解决了这个问题，一般的情况下抽象的变化概率很小，让用户程序依赖于抽象，实现的细节也依赖于抽象。即使实现">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-设计模式 依赖倒置原则" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/设计模式 依赖倒置原则/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.999Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="设计模式-依赖倒置原则"><a href="#设计模式-依赖倒置原则" class="headerlink" title="设计模式 依赖倒置原则"></a>设计模式 依赖倒置原则</h1><p>就是要依赖于抽象，不要依赖于具体。简单的说就是对抽象进行编程，不要对实现进行编程，这样就降低了客户与实现模块间的耦合。</p>
+<p>面向过程的开发，上层调用下层，上层依赖于下层，当下层剧烈变化时，上层也要跟着变化，这就会导致模块的复用性降低而且大大提高了开发的成本。 面向对象的开发很好的解决了这个问题，一般的情况下抽象的变化概率很小，让用户程序依赖于抽象，实现的细节也依赖于抽象。即使实现细节不断变化，只要抽象不变，客户程序就不需要变化。这大大降低了客户程序域实现细节的耦合度。</p>
+<p>抽象不应该依赖细节，细节应该依赖于抽象。说白了，就是针对接口编程，不要针对实现编程。</p>
+<p>依赖倒置原则包含三层含义：</p>
+<p>1)高层模块不应该依赖低层模块，两者都应该依赖其抽象；</p>
+<p>2)抽象不应该依赖细节;</p>
+<p>3)细节应该依赖抽象。</p>
+<p><strong>定义</strong>：高层模块不应该依赖低层模块，二者都应该依赖其抽象；抽象不应该依赖细节；细节应该依赖抽象。</p>
+<p><strong>问题由来</strong>：类A直接依赖类B，假如要将类A改为依赖类C，则必须通过修改类A的代码来达成。这种场景下，类A一般是高层模块，负责复杂的业务逻辑；类B和类C是低层模块，负责基本的原子操作；假如修改类A，会给程序带来不必要的风险。</p>
+<p><strong>解决方案</strong>：将类A修改为依赖接口I，类B和类C各自实现接口I，类A通过接口I间接与类B或者类C发生联系，则会大大降低修改类A的几率。</p>
+<p>依赖倒置原则基于这样一个事实：相对于细节的多变性，抽象的东西要稳定的多。以抽象为基础搭建起来的架构比以细节为基础搭建起来的架构要稳定的多。在Java中，抽象指的是接口或者抽象类，细节就是具体的实现类，使用接口或者抽象类的目的是制定好规范和契约，而不去涉及任何具体的操作，把展现细节的任务交给他们的实现类去完成。</p>
+<p>依赖倒置原则的核心思想是<strong>面向接口编程</strong></p>
+<h2 id="三种实现方式"><a href="#三种实现方式" class="headerlink" title="三种实现方式"></a>三种实现方式</h2><p>1、通过构造函数传递依赖对象； </p>
+<p>比如在构造函数中的需要传递的参数是抽象类或接口的方式实现。</p>
+<p>2、通过setter方法传递依赖对象； </p>
+<p>即在我们设置的setXXX方法中的参数为抽象类或接口，来实现传递依赖对象。</p>
+<p>3、接口声明实现依赖对象，也叫接口注入；</p>
+<p>即在函数声明中参数为抽象类或接口，来实现传递依赖对象，从而达到直接使用依赖对象的目的。</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/zhengzhb/article/details/7289269" target="_blank" rel="noopener">设计模式六大原则（3）：依赖倒置原则</a></p>
+<p><a href="http://www.codeceo.com/article/dependency-inversion-principle.html" target="_blank" rel="noopener">设计模式之依赖倒置原则含义及现实举例</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/设计模式 依赖倒置原则/" data-id="cjabwqtoh001jhhyu1t31zu85" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/11/23/网络 DNS 网关 路由/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

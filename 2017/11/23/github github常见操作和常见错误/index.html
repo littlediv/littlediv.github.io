@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="github github常见操作和常见错误Quick setup — if you’ve done this kind of thing before Set up in Desktop    orHTTPS https://github.com/littlediv/DownloadProgress.git  SSH">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/github github常见操作和常见错误/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="github github常见操作和常见错误Quick setup — if you’ve done this kind of thing before Set up in Desktop    orHTTPS https://github.com/littlediv/DownloadProgress.git  SSH git@github.com:littlediv/DownloadProgre">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.815Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="github github常见操作和常见错误Quick setup — if you’ve done this kind of thing before Set up in Desktop    orHTTPS https://github.com/littlediv/DownloadProgress.git  SSH git@github.com:littlediv/DownloadProgre">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-github github常见操作和常见错误" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/github github常见操作和常见错误/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.815Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="github-github常见操作和常见错误"><a href="#github-github常见操作和常见错误" class="headerlink" title="github github常见操作和常见错误"></a>github github常见操作和常见错误</h1><p>Quick setup — if you’ve done this kind of thing before<br> Set up in Desktop    or<br>HTTPS</p>
+<pre><code>https://github.com/littlediv/DownloadProgress.git
+</code></pre><p> SSH</p>
+<pre><code>git@github.com:littlediv/DownloadProgress.git
+</code></pre><p>We recommend every repository include a README, LICENSE, and .gitignore.<br>…or create a new repository on the command line</p>
+<pre><code>echo &quot;# DownloadProgress&quot; &gt;&gt; README.md
+git init
+git add README.md
+git commit -m &quot;first commit&quot;
+git remote add origin git@github.com:littlediv/DownloadProgress.git
+git push -u origin master
+</code></pre><p>…or push an existing repository from the command line</p>
+<pre><code>git remote add origin git@github.com:littlediv/DownloadProgress.git
+git push -u origin master
+</code></pre><p>…or import code from another repository<br>You can initialize this repository with code from a Subversion, Mercurial, or TFS project.</p>
+<p>Import code</p>
+<h2 id="错误提示：fatal-remote-origin-already-exists"><a href="#错误提示：fatal-remote-origin-already-exists" class="headerlink" title="错误提示：fatal: remote origin already exists"></a>错误提示：fatal: remote origin already exists</h2><p>如果输入$ git remote add origin git@github.com:djqiang（github帐号名）/gitdemo（项目名）.git </p>
+<p>提示出错信息：fatal: remote origin already exists.</p>
+<p>解决办法如下：</p>
+<p>1、先输入$ git remote rm origin</p>
+<p>2、再输入$ git remote add origin git@github.com:djqiang/gitdemo.git 就不会报错了！</p>
+<p> 3、如果输入$ git remote rm origin 还是报错的话，error: Could not remove config section ‘remote.origin’. 我们需要修改gitconfig文件的内容</p>
+<p>4、找到你的github的安装路径，我的是C:\Users\ASUS\AppData\Local\GitHub\PortableGit_ca477551eeb4aea0e4ae9fcd3358bd96720bb5c8\etc</p>
+<p>5、找到一个名为gitconfig的文件，打开它把里面的[remote “origin”]那一行删掉就好了</p>
+<h2 id="github提示Permission-denied-publickey-，如何才能解决？"><a href="#github提示Permission-denied-publickey-，如何才能解决？" class="headerlink" title="github提示Permission denied (publickey)，如何才能解决？"></a>github提示Permission denied (publickey)，如何才能解决？</h2><pre><code>$ git push -u origin master
+Permission denied (publickey).
+fatal: Could not read from remote repository.
+</code></pre><p>1、创建SSH密钥</p>
+<p>1）打开终端，输入命令 ssh-keygen -t rsa -C “66<strong>**</strong>33@163.com” 然后按回车键，双引号里的邮箱换成自己的；</p>
+<p>2）按回车保存到默认位置，再稍等出来提示输入密码短语，输完按回车要输两遍；它用来加密私钥，也就是以后使用私钥的时候要输这个密码；</p>
+<p>3）稍等出来提示成功，密钥存放在自己主文件夹的.ssh文件夹中</p>
+<p>4）打开文件管理器，显示隐藏文件后，可以看到这个文件夹中有两个文件，一个私钥一个公钥，把这个文件夹备份一下.id_rsa 是密钥 ，id_rsa.pub是公钥。<br>打开公钥文件，把里面的内容全部选中以后复制一下，等会要用到；</p>
+<p>5）接下来登录 github，在右上角自己的用户名旁边找到扳手图标设置账户，在设置页面右边找到 SSH  Keys，点击进入；<br>6）点击ADD SSH key</p>
+<p>7）在 Title 里输一个名称，下面的 Key 里一会粘贴自己的公钥；</p>
+<p>8）到刚才的.ssh文件夹中，双击打开自己的公钥文件 id_rsa.pub，复制里面的所有内容，然后粘贴到刚才的密钥导入框中，然后点下边的“Add Key”导入密钥；</p>
+<h2 id="访问受限"><a href="#访问受限" class="headerlink" title="访问受限"></a>访问受限</h2><pre><code>$ ssh -T git@github.com
+Permission denied (publickey).
+</code></pre><p>生成的 秘钥 文件位置不正确 /c/Users/mac/.ssh/id_rsa </p>
+<pre><code>$ ssh -T -v git@github.com
+OpenSSH_7.1p2, OpenSSL 1.0.2d 9 Jul 2015
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: Connecting to github.com [192.30.255.112] port 22.
+debug1: Connection established.
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_rsa type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_rsa-cert type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_dsa type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_dsa-cert type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ecdsa type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ecdsa-cert type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ed25519 type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ed25519-cert type -1
+debug1: Enabling compatibility mode for protocol 2.0
+debug1: Local version string SSH-2.0-OpenSSH_7.1
+debug1: Remote protocol version 2.0, remote software version libssh_0.7.0
+debug1: no match: libssh_0.7.0
+debug1: Authenticating to github.com:22 as &apos;git&apos;
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: server-&gt;client chacha20-poly1305@openssh.com &lt;implicit&gt; none
+debug1: kex: client-&gt;server chacha20-poly1305@openssh.com &lt;implicit&gt; none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: Server host key: ssh-rsa SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8
+debug1: Host &apos;github.com&apos; is known and matches the RSA host key.
+debug1: Found key in /c/Users/mac/.ssh/known_hosts:2
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: SSH2_MSG_SERVICE_REQUEST sent
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+debug1: Authentications that can continue: publickey
+debug1: Next authentication method: publickey
+debug1: Trying private key: /c/Users/mac/.ssh/id_rsa
+debug1: Trying private key: /c/Users/mac/.ssh/id_dsa
+debug1: Trying private key: /c/Users/mac/.ssh/id_ecdsa
+debug1: Trying private key: /c/Users/mac/.ssh/id_ed25519
+debug1: No more authentication methods to try.
+Permission denied (publickey).
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/dengjianqiang2011/article/details/9260435" target="_blank" rel="noopener">github常见操作和常见错误！错误提示：fatal: remote origin already exists.</a></p>
+<p><a href="https://www.zhihu.com/question/21402411" target="_blank" rel="noopener">github提示Permission denied (publickey)，如何才能解决？</a></p>
+<p><a href="http://blog.csdn.net/makenothing/article/details/8450417" target="_blank" rel="noopener">创建SSH密钥</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/github github常见操作和常见错误/" data-id="cjabwqto10010hhyuya1cbel9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/Intent传递数据问题/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/getColor过时/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

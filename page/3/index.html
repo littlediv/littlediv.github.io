@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/page/3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-json解析（GSON）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/json解析（GSON）/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.875Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="json-解析（Gson）"><a href="#json-解析（Gson）" class="headerlink" title="json 解析（Gson）"></a>json 解析（Gson）</h1><h2 id="Caused-by-java-lang-IllegalStateException-Expected-BEGIN-OBJECT-but-was-STRING-at-line-1-column-36"><a href="#Caused-by-java-lang-IllegalStateException-Expected-BEGIN-OBJECT-but-was-STRING-at-line-1-column-36" class="headerlink" title="Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 36"></a>Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 36</h2><p>这里遇到一个比较棘手的问题，原来项目中使用的不是Gson，客户端在请求json数据时如果没有具体的数据内容会返回空字符串，如：</p>
+<p>{“result”:{“errorMessage”:”用户名/密码错误”,”errorCode”:0},”data”:””}</p>
+<p>这里的data是表示没有具体的数据，但是在Gson解析时我们用来接受的数据却是具体的实体对象，bean定义如下：</p>
+<pre><code>public class Result&lt;T extends BaseEntity&gt; implements Serializable {
+
+    private static final long serialVersionUID = -645821020648740998L;
+    private Status result;
+    private T data;
+
+
+    public Status getResult() {
+        return result;
+    }
+
+    public void setResult(Status result) {
+        this.result = result;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+}
+</code></pre><p>所以这里在解析的时候就会报一个错误，大体内容是：解析到了一个String，但期望的是一个对象，start with ‘{’，也就是说我们的json应该是下面这种的：</p>
+<p>{“result”:{“errorMessage”:”用户名/密码错误”,”errorCode”:0},”data”:null}</p>
+<p>或者没有data，</p>
+<p>{“result”:{“errorMessage”:”用户名/密码错误”,”errorCode”:0}}</p>
+<p>这里无法修改服务端的代码，所以只能在客户端对获取的数据进行转换，转换的方法是：</p>
+<pre><code>JsonObject obj = new JsonParser().parse(json_str).getAsJsonObject();
+if (obj.get(&quot;data&quot;).toString().equals(&quot;\&quot;\&quot;&quot;)){
+    obj.remove(&quot;data&quot;);
+}
+Result&lt;User&gt; result;
+Gson _g = new GsonBuilder().serializeNulls().create();
+result = _g.fromJson(obj,new TypeToken&lt;Result&lt;User&gt;&gt;(){}.getType());
+</code></pre><p>通过一个中间对象，JsonObject将data为空的json去除掉相应的data项。</p>
+<p>或者直接将数据返回为空<br>    LiveInfoForGround liveInfoForHigh = null;<br>    if (response != null) {<br>        JsonObject obj = new JsonParser().parse(response).getAsJsonObject();<br>        if (obj != null &amp;&amp; obj.get(“data”).toString().equals(“\”\””)) {<br>            return null;<br>        }<br>        Gson gson = new Gson();<br>        liveInfoForHigh = gson.fromJson(response, LiveInfoForGround.class);<br>    }</p>
+<p>详见参考JsonElement使用。</p>
+<h2 id="动态解析未知字段-key-方法"><a href="#动态解析未知字段-key-方法" class="headerlink" title="动态解析未知字段 key 方法"></a>动态解析未知字段 key 方法</h2><p>json数据中的字段key是动态可变的时候，由于Gson是使用静态注解的方式来设置实体对象的，因此我们很难直接对返回的类型来判断。但Gson在解析过程中如果不知道解析的字段，就会将所有变量存储在一个Map中，我们只要实例化这个map就能动态地取出key和value了。</p>
+<p>先给出一段jsondata，这是天气预报的数据，其中day_20151002这种key是随日期而变化的，在实体类中就不能当做静态变量来处理，我们就通过map来取出其映射对象。</p>
+<p>代码</p>
+<pre><code>{ &quot;resultcode&quot;:&quot;200&quot;,&quot;reason&quot;:&quot;successed!&quot;,  
+&quot;result&quot;:{  
+        &quot;sk&quot;:{  
+             &quot;temp&quot;:&quot;24&quot;,&quot;wind_direction&quot;:&quot;东北风&quot;,&quot;wind_strength&quot;:&quot;2级&quot;,&quot;humidity&quot;:&quot;28%&quot;,&quot;time&quot;:&quot;17:38&quot;  
+              },  
+     &quot;today&quot;:{  
+             &quot;temperature&quot;:&quot;15℃~26℃&quot;,&quot;weather&quot;:&quot;多云转晴&quot;,&quot;wind&quot;:&quot;东北风微风&quot;,&quot;week&quot;:&quot;星期日&quot;,&quot;city&quot;:&quot;桂林&quot;,&quot;date_y&quot;:&quot;2015年10月11日&quot;,&quot;dressing_index&quot;:&quot;舒适&quot;,&quot;dressing_advice&quot;:&quot;建议着长袖T恤、衬衫加单裤等服装。年老体弱者宜着针织长袖衬衫、马甲和长裤。&quot;,&quot;uv_index&quot;:&quot;弱&quot;,&quot;comfort_index&quot;:&quot;&quot;,&quot;wash_index&quot;:&quot;较适宜&quot;,&quot;travel_index&quot;:&quot;较适宜&quot;,&quot;exercise_index&quot;:&quot;较适宜&quot;,&quot;drying_index&quot;:&quot;&quot;  
+             },  
+    &quot;future&quot;:{  
+             &quot;day_20151011&quot;:{&quot;temperature&quot;:&quot;15℃~26℃&quot;,&quot;weather&quot;:&quot;多云转晴&quot;,&quot;wind&quot;:&quot;东北风微风&quot;,&quot;week&quot;:&quot;星期日&quot;,&quot;date&quot;:&quot;20151011&quot;},  
+             &quot;day_20151012&quot;:{&quot;temperature&quot;:&quot;16℃~27℃&quot;,&quot;weather&quot;:&quot;晴转多云&quot;,&quot;wind&quot;:&quot;微风&quot;,&quot;week&quot;:&quot;星期一&quot;,&quot;date&quot;:&quot;20151012&quot;},  
+             &quot;day_20151013&quot;:{&quot;temperature&quot;:&quot;16℃~26℃&quot;,&quot;weather&quot;:&quot;多云转晴&quot;,&quot;wind&quot;:&quot;微风&quot;,&quot;week&quot;:&quot;星期二&quot;,&quot;date&quot;:&quot;20151013&quot;},  
+             &quot;day_20151014&quot;:{&quot;temperature&quot;:&quot;17℃~27℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期三&quot;,&quot;date&quot;:&quot;20151014&quot;},  
+             &quot;day_20151015&quot;:{&quot;temperature&quot;:&quot;17℃~28℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期四&quot;,&quot;date&quot;:&quot;20151015&quot;},  
+             &quot;day_20151016&quot;:{&quot;temperature&quot;:&quot;17℃~30℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期五&quot;,&quot;date&quot;:&quot;20151016&quot;},  
+             &quot;day_20151017&quot;:{&quot;temperature&quot;:&quot;17℃~30℃&quot;,&quot;weather&quot;:&quot;晴&quot;,&quot;wind&quot;:&quot;北风微风&quot;,&quot;week&quot;:&quot;星期六&quot;,&quot;date&quot;:&quot;20151017&quot;}  
+             }  
+          },  
+&quot;error_code&quot;:0  
+}  
+</code></pre><p>javaBean 代码</p>
+<pre><code>public class Response {
+    public String resultcode;
+    public String reason;
+    public ResultBean result;
+    public int error_code;
+
+    public static class ResultBean {
+
+        public SkBean sk;
+        public TodayBean today;
+        public Map&lt;String,FutureBean&gt; future;
+
+        public static class SkBean {
+            public String temp;
+            public String wind_direction;
+            public String wind_strength;
+            public String humidity;
+            public String time;        
+        }
+
+        public static class TodayBean {
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String city;
+            public String date_y;
+            public String dressing_index;
+            public String dressing_advice;
+            public String uv_index;
+            public String comfort_index;
+            public String wash_index;
+            public String travel_index;
+            public String exercise_index;
+            public String drying_index;
+
+
+        }
+
+        public static class FutureBean {
+
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String date;
+
+
+        }
+    }
+}
+</code></pre><p>注： android studio 中使用插件时（ 类 右键 –&gt; generate –&gt; GsonFormat ）时由于day_20151002这种key是随日期而变化的，而 gson 只作静态变量方式解析，会出现以下情况：</p>
+<pre><code>public FutureBean future;
+
+public static class FutureBean {
+        public Day20151011Bean day_20151011;
+
+        public static class Day20151011Bean {
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String date;
+
+        }
+
+    }
+</code></pre><p>需要更改为 </p>
+<pre><code>public Map&lt;String,FutureBean&gt; future;
+public static class FutureBean {
+        public String temperature;
+        public String weather;
+        public String wind;
+        public String week;
+        public String date;
+
+
+    }
+</code></pre><p>最后的 bean 格式为：</p>
+<pre><code>public class Response {
+    public String resultcode;
+    public String reason；
+    public ResultBean result;
+    public int error_code;
+
+    public static class ResultBean {
+
+        public SkBean sk;
+        public TodayBean today;
+        public Map&lt;String,FutureBean&gt; future;
+
+        public static class SkBean {
+            public String temp;
+            public String wind_direction;
+            public String wind_strength;
+            public String humidity;
+            public String time;
+
+
+        }
+
+        public static class TodayBean {
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String city;
+            public String date_y;
+            public String dressing_index;
+            public String dressing_advice;
+            public String uv_index;
+            public String comfort_index;
+            public String wash_index;
+            public String travel_index;
+            public String exercise_index;
+            public String drying_index;
+
+
+        }
+
+        public static class FutureBean {
+
+            public String temperature;
+            public String weather;
+            public String wind;
+            public String week;
+            public String date;
+
+
+        }
+    }
+}
+</code></pre><ol>
+<li><p>原始 jsonObject 和 jsonArray 解析</p>
+<pre><code>Response response = null;
+try {
+    JSONObject jsonObject = new JSONObject(json);
+    if (jsonObject != null) {
+        response = new Response();
+        String resultcode = jsonObject.optString(&quot;resultcode&quot;);
+        String reason = jsonObject.optString(&quot;reason&quot;);
+        int error_code = jsonObject.optInt(&quot;error_code&quot;);
+
+        response.resultcode = resultcode;
+        response.reason = reason;
+        response.error_code = error_code;
+
+        JSONObject reslut = jsonObject.optJSONObject(&quot;result&quot;);
+        // reslut.length() &gt; 0 可防止 &quot;result&quot;:&quot;&quot; 这种情况
+        if (reslut != null &amp;&amp; reslut.length() &gt; 0) {
+            Response.ResultBean resultBean = new Response.ResultBean();
+
+            JSONObject sk = reslut.optJSONObject(&quot;sk&quot;);
+            if (sk != null) {
+                Response.ResultBean.SkBean skBean = new Response.ResultBean.SkBean();
+                String temp = sk.optString(&quot;temp&quot;);
+                String wind_direction = sk.optString(&quot;wind_direction&quot;);
+                skBean.temp = temp;
+                skBean.wind_direction = wind_direction;
+
+                resultBean.sk = skBean;
+            }
+</code></pre></li>
+</ol>
+<pre><code>            JSONObject today = reslut.optJSONObject(&quot;today&quot;);
+            if (today != null) {
+                Response.ResultBean.TodayBean todayBean = new Response.ResultBean.TodayBean();
+                String temperature = today.optString(&quot;temperature&quot;);
+                String weather = today.optString(&quot;weather&quot;);
+                todayBean.temperature = temperature;
+                todayBean.weather = weather;
+
+                resultBean.today = todayBean;
+            }
+
+            JSONObject future = reslut.optJSONObject(&quot;future&quot;);
+            if (future != null) {
+                HashMap&lt;String, Response.ResultBean.FutureBean&gt; futureBeanHashMap = new HashMap&lt;&gt;();
+
+                Iterator&lt;String&gt; keys = future.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    JSONObject futureItem = future.optJSONObject(key);
+                    if (futureItem != null) {
+                        Response.ResultBean.FutureBean futureBean = new Response.ResultBean.FutureBean();
+                        String temperature = futureItem.optString(&quot;temperature&quot;);
+                        String weather = futureItem.optString(&quot;weather&quot;);
+                        futureBean.temperature = temperature;
+                        futureBean.weather = weather;
+                        futureBeanHashMap.put(key, futureBean);
+                    }
+
+                }
+                resultBean.future = futureBeanHashMap;
+
+            }
+
+            response.result = resultBean;
+        }
+
+    }
+
+} catch (JSONException e) {
+    e.printStackTrace();
+}
+</code></pre><ol>
+<li>gson 解析</li>
+</ol>
+<pre><code>Gson gson = new Gson();    
+Response response = gson.fromJson(json, Response.class);
+</code></pre><p>很方便</p>
+<h2 id="服务器-json-格式不标准-本来是-“data”-，-服务器-有时候返回-“data”-””-…"><a href="#服务器-json-格式不标准-本来是-“data”-，-服务器-有时候返回-“data”-””-…" class="headerlink" title="服务器 json 格式不标准( 本来是 “data”:{} ， 服务器 有时候返回 “data”:””   ….)"></a>服务器 json 格式不标准( 本来是 “data”:{} ， 服务器 有时候返回 “data”:””   ….)</h2><pre><code>public static LiveInfo handleLiveInfo(String response) {
+    LiveInfo liveInfo = null;
+    if (response != null) {
+        JsonObject obj = new JsonParser().parse(response).getAsJsonObject();
+        // 防止 &quot;data&quot;:&quot;&quot; 时 gson 格式报错 (BEGIN_WITH ....)
+        if (obj != null &amp;&amp; obj.get(&quot;data&quot;).toString().equals(&quot;\&quot;\&quot;&quot;)) {
+            return null;
+        }
+        Gson gson = new Gson();
+        liveInfo = gson.fromJson(response, LiveInfo.class);
+    }
+
+    return liveInfo;
+}
+</code></pre><h2 id="Gson解析（List和Map）格式json数据"><a href="#Gson解析（List和Map）格式json数据" class="headerlink" title="Gson解析（List和Map）格式json数据"></a>Gson解析（List和Map）格式json数据</h2><pre><code>public class jsonParse{  
+
+
+
+class City{  
+
+    int id;  
+
+    String name;  
+
+    String code;  
+
+    String map;  
+
+}  
+
+
+public static void main(String[] args) {  
+
+    //列表/array 数据  
+
+             String str=&quot;[{&apos;id&apos;: &apos;1&apos;,&apos;code&apos;: &apos;bj&apos;,&apos;name&apos;: &apos;北京&apos;,&apos;map&apos;: &apos;39.90403, 116.40752599999996&apos;}, {&apos;id&apos;: &apos;2&apos;,&apos;code&apos;: &apos;sz&apos;,&apos;name&apos;: &apos;深圳&apos;,&apos;map&apos;: &apos;22.543099, 114.05786799999998&apos;}, {&apos;id&apos;: &apos;9&apos;,&apos;code&apos;: &apos;sh&apos;,&apos;name&apos;: &apos;上海&apos;,&apos;map&apos;: &apos;31.230393,121.473704&apos;}, {&apos;id&apos;: &apos;10&apos;,&apos;code&apos;: &apos;gz&apos;,&apos;name&apos;: &apos;广州&apos;,&apos;map&apos;: &apos;23.129163,113.26443500000005&apos;}]&quot;;  
+
+    Gson gson=new Gson();  
+
+    List&lt;City&gt; rs=new ArrayList&lt;City&gt;();  
+
+     Type type = new TypeToken&lt;ArrayList&lt;City&gt;&gt;() {}.getType();  
+
+      rs=gson.fromJson(str, type);  
+
+      for(City o:rs){  
+
+              System.out.println(o.name);  
+
+      }  
+
+
+
+      //map数据  
+
+      String jsonStr=&quot;{&apos;1&apos;: {&apos;id&apos;: &apos;1&apos;,&apos;code&apos;: &apos;bj&apos;,&apos;name&apos;: &apos;北京&apos;,&apos;map&apos;: &apos;39.90403, 116.40752599999996&apos;},&apos;2&apos;: {&apos;id&apos;: &apos;2&apos;,&apos;code&apos;: &apos;sz&apos;,&apos;name&apos;: &apos;深圳&apos;,&apos;map&apos;: &apos;22.543099, 114.05786799999998&apos;},&apos;9&apos;: {&apos;id&apos;: &apos;9&apos;,&apos;code&apos;: &apos;sh&apos;,&apos;name&apos;: &apos;上海&apos;,&apos;map&apos;: &apos;31.230393,121.473704&apos;},&apos;10&apos;: {&apos;id&apos;: &apos;10&apos;,&apos;code&apos;: &apos;gz&apos;,&apos;name&apos;: &apos;广州&apos;,&apos;map&apos;: &apos;23.129163,113.26443500000005&apos;}}&quot;;  
+
+      Map&lt;String, City&gt; citys = gson.fromJson(jsonStr, new TypeToken&lt;Map&lt;String, City&gt;&gt;() {}.getType());   
+
+      System.out.println(citys.get(&quot;1&quot;).name+&quot;----------&quot;+citys.get(&quot;2&quot;).code);  
+
+}  
+
+}  
+</code></pre><h2 id="json-中-key-包含中文"><a href="#json-中-key-包含中文" class="headerlink" title="json 中 key 包含中文"></a>json 中 key 包含中文</h2><pre><code>{&quot;ret&quot;:0,
+    &quot;response&quot;:{
+        &quot;tag_category&quot;:{
+            &quot;中国画&quot;:{
+                &quot;年代&quot;:[&quot;先秦两汉&quot;,&quot;战国楚国&quot;,&quot;魏晋南北&quot;,&quot;隋唐五代&quot;,&quot;南宋北宋&quot;,&quot;元代&quot;,&quot;明清&quot;,&quot;近现代&quot;,&quot;年代不详&quot;,&quot;其他&quot;],
+                &quot;技法&quot;:[&quot;泼墨&quot;,&quot;工笔&quot;,&quot;写意&quot;,&quot;白描&quot;,&quot;写生&quot;,&quot;皴法&quot;,&quot;没骨&quot;,&quot;指头画&quot;,&quot;其他&quot;],
+
+            },
+            &quot;书法&quot;:{
+                &quot;分类&quot;:[&quot;书法&quot;,&quot;碑帖&quot;,&quot;写本写经&quot;,&quot;书札文牍&quot;,&quot;其他&quot;],
+                &quot;书体&quot;:[&quot;篆书&quot;,&quot;隶书&quot;,&quot;楷书&quot;,&quot;草书&quot;,&quot;行书&quot;,&quot;其他&quot;],
+
+            },
+
+        }
+    }
+}
+</code></pre><p>Json字段里面的Key存在中文，所以必须在相应的字段上使用@SerializedName(“中国画”)注解，给Key取别名。</p>
+<p>如下：</p>
+<pre><code> @SerializedName(&quot;中国画&quot;)
+public ChinaPicture chinaPicture;
+/**
+     * 中国画
+ */
+public static class ChinaPicture {
+    @SerializedName(&quot;年代&quot;)
+    public List&lt;String&gt; years;
+    @SerializedName(&quot;技法&quot;)
+    public List&lt;String&gt; techniques;
+    @SerializedName(&quot;题材&quot;)
+    public List&lt;String&gt; topic;
+    @SerializedName(&quot;规格&quot;)
+    public List&lt;String&gt; specification;
+}
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/chaosminds/article/details/49049455" target="_blank" rel="noopener">Gson解析JSON中动态未知字段key的方法</a><br><a href="http://www.bejson.com/" target="_blank" rel="noopener">在线JSON校验格式化工具(Be JSON)</a><br><a href="http://www.cnblogs.com/bianmajiang/p/3998083.html" target="_blank" rel="noopener">使用Gson解析复杂、变态的Json数据（包含中文key）</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/json解析（GSON）/" data-id="cjabwqto60016hhyuw5mt8irp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-java 泛型 参数" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/java 泛型 参数/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.867Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="public-static-list-aslist-T…a-这个啥意思"><a href="#public-static-list-aslist-T…a-这个啥意思" class="headerlink" title="public static list aslist(T…a)这个啥意思"></a>public static <t>list<t> aslist(T…a)这个啥意思</t></t></h1><p>泛型，指的是某种类型，至于什么类型还未定，反正它想表示的是，相同的字母代表这个地方要放相同的类型，个数是一个，同时只能放一种类型，至于放哪种类型，谁去用这个T，那就谁来决定</p>
+<p>其实这个语法被吐槽了好久了</p>
+<p>这个算是个缩写</p>
+<p>完整版应该是这样的</p>
+<p>public <type extends="" object=""> static List<type> asList(Type.. a)</type></type></p>
+<p>从完整版应该能看出来真正的泛型起作用的是后面两个T</p>
+<p>一个指的是方法的泛型返回值</p>
+<p>一个指的是方法的泛型参数</p>
+<p>最前面那个T是为了显示告诉编译器T是个泛型的类型</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/java 泛型 参数/" data-id="cjabwqto40013hhyu9tdl6mb5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-java 构造函数" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/java 构造函数/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.863Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="java-构造函数"><a href="#java-构造函数" class="headerlink" title="java 构造函数"></a>java 构造函数</h1><h2 id="为什么创建了一个子类对象会调用其父类的构造方法"><a href="#为什么创建了一个子类对象会调用其父类的构造方法" class="headerlink" title="为什么创建了一个子类对象会调用其父类的构造方法"></a>为什么创建了一个子类对象会调用其父类的构造方法</h2><p>代码实例：</p>
+<pre><code>package simplejava;
+
+class Super {
+    String s;
+    public Super() {
+        System.out.println(&quot;Super&quot;);
+    }
+}
+
+class Sub extends Super {
+    public Sub() {
+        System.out.println(&quot;Sub&quot;);
+    }
+
+}
+
+public class Q4 {
+    public static void main(String[] args) {
+        Sub s = new Sub();
+    }
+}
+</code></pre><p>结果打印：</p>
+<pre><code>Super
+Sub
+</code></pre><p>当一个类继承了某个类时，在子类的构造方法里，super()必须先被调用；如果你没有写，编译器会自动调用super()方法，即调用了父类的构造方法；</p>
+<p>这并不是创建了两个对象，其实只有一个子类Sub对象；之所以需要调用父类的构造方法是因为在父类中，可能存在私有属性需要在其构造方法内初始化；</p>
+<p>当编译器自动插入父类构造方法的调用后，子类的构造方法类似如下代码：</p>
+<pre><code> public Sub() {
+    super();
+    System.out.println(&quot;Sub&quot;);
+}
+</code></pre><h2 id="一个常见的错误信息：Implicit-super-constructor-is-undefined-for-default-constructor"><a href="#一个常见的错误信息：Implicit-super-constructor-is-undefined-for-default-constructor" class="headerlink" title="一个常见的错误信息：Implicit super constructor is undefined for default constructor"></a>一个常见的错误信息：Implicit super constructor is undefined for default constructor</h2><pre><code>class Super{
+    String s;
+
+    public Super(String s) {
+        this.s = s;
+    }
+}
+public class Sub extends Super{
+
+    int x = 200;
+
+    public Sub() { //报错
+        System.out.println(&quot;Sub&quot;);
+    }
+
+    public Sub(String s) { //报错
+
+    }
+
+    public static void main(String[] args) {
+        Sub s = new Sub();
+    }
+}
+</code></pre><p>之所以出现这个编译错误，是因为父类的默认构造方法未定义。在Java中，如果一个类没有定义构造方法，编译器会默认插入一个无参数的构造方法；但是如果一个构造方法在父类中已定义，在这种情况，编译器是不会自动插入一个默认的无参构造方法，这正是以上demo的情况；</p>
+<p>对于子类来说，不管是无参构造方法还是有参构造方法，都会默认调用父类的无参构造方法；当编译器尝试在子类中往这两个构造方法插入super()方法时，因为父类没有一个默认的无参构造方法，所以编译器报错；</p>
+<p>要修复这个错误，很简单：</p>
+<p>1、在父类手动定义一个无参构造方法：</p>
+<pre><code>public Super(){
+    System.out.println(&quot;Super&quot;);
+}
+</code></pre><p>2、移除父类中自定义的构造方法</p>
+<p>3、在子类中自己写上父类构造方法的调用；如super(value)；</p>
+<h2 id="在子类中明确调用父类构造方法"><a href="#在子类中明确调用父类构造方法" class="headerlink" title="在子类中明确调用父类构造方法"></a>在子类中明确调用父类构造方法</h2><p>以下代码运行正常：</p>
+<pre><code>class Super{
+        String s;
+
+        public Super(String s) {
+            this.s = s;
+        }
+    }
+    public class Sub extends Super{
+
+        int x = 200;
+
+        public Sub(String s) { 
+            super(s)
+        }
+
+        public static void main(String[] args) {
+            Sub s = new Sub();
+        }
+    }
+}
+</code></pre><p>父类定义了一个有参构造方法，然后子类构造方法明确调用了父类有参构造方法；</p>
+<h2 id="规则总结"><a href="#规则总结" class="headerlink" title="规则总结"></a>规则总结</h2><p>简单的说，规则是这样的：</p>
+<p>在子类构造方法中，不管是程序员手动调用父类构造方法还是编译器自动调用，</p>
+<p>子类构造方法必须要调用父类的某个构造方法；</p>
+<p>被子类调用的父类构造方法在父类中必须是存在的；</p>
+<h2 id="一个有趣的问题"><a href="#一个有趣的问题" class="headerlink" title="一个有趣的问题"></a>一个有趣的问题</h2><p>如果一个类定义了一个有参数的构造方法，Java为什么就不提供默认的无参构造方法呢？</p>
+<p>有兴趣的可以看下stackoverflow中的回答：</p>
+<p><a href="http://stackoverflow.com/q/16046200/127859" target="_blank" rel="noopener">http://stackoverflow.com/q/16046200/127859</a></p>
+<p>译文链接：<a href="http://www.programcreek.com/2013/04/what-are-the-frequently-asked-questions-about-constructors-in-java/" target="_blank" rel="noopener">http://www.programcreek.com/2013/04/what-are-the-frequently-asked-questions-about-constructors-in-java/</a></p>
+<h2 id="为什么一定要调用父类的构造方法"><a href="#为什么一定要调用父类的构造方法" class="headerlink" title="为什么一定要调用父类的构造方法"></a>为什么一定要调用父类的构造方法</h2><ol>
+<li><p>你想吧，如果你定义了一个有参的构造函数 这时候就不会调用父类构造方法了，因为你有自己的特性了啊。如果你实例化的时候调用的是无参的构造方法当然会走父类的了，因为你没申明自己的特性</p>
+</li>
+<li><p>楼主 在创建对象的时候如果父类中的数据需要初始化，那么就必须调用，如果父类中的数据不用初始化，也就不用显示的调用了 这个就相当于 你在子类中可以使用父类的变量 但是你在子类中初始化 你不感觉多此一举吗</p>
+</li>
+<li><p>有父类就会有父类构造方法，这个是必然的。不然可能会出现空指针。<br>没父类继承时的就只要当前类的构造方法了。</p>
+</li>
+<li><p>这个是和继承有关系。子类继承父类后。在内部的存储中。子类是没有父类已经定义的那部分。所以在进行new的时候子类只是new了自己的那部分。</p>
+</li>
+<li><p>任何时候都会调用父类构造函数的吧？<br>分两种情况：<br>1.不显示调用父类构造函数，则默认调用父类的无参构造函数。如果父类声明了有参数的构造函数，而没写无参的构造函数，那么编译出错，提示父类没有默认构造函数<br>2.显示调用父类构造函数，这个简单，你知道父类的哪个构造函数就用这个构造函数初始化父类。</p>
+</li>
+<li><p>儿子有了东西吃，要先给老子吃，这位老子有了东西，得先给这位老子的老子吃…… 直到最初的上帝Object，他得到他儿子的东西，就自己吃了吧…… 你要理解成“Java教育我们要讲孝心”也可以；但要理解成交税也行；甚至理解成小弟向大哥交保护费也可以…… 呵呵~说笑了! <strong>真实的原因是：实例化的本质，是调用构造函数分配实例标识，申请内存存放实例中各成员变量的初始值。如果该类继承了某个父类，也就继承(相当于复制)了父类的所有非私有成员变量，而如果没有给继承过来的成员变量赋初值，那后续施加在该成员变量的操作如何进行？</strong></p>
+</li>
+<li><p>为什么要先调用父类的构造方法？<br>因为父类的定义的public和protected函数和变量都会自动被继承到子类中，如果父类不初始化，这些定义在父类的函数和变量怎么能在子类中使用？<br>其实，不仅先调用父类的构造方法，在调用父类的构造方法之前，还先初始化了父类的静态变量和静态块<br><strong>完整的初始化顺序是：父类静态变量 父类静态块 子类静态变量 子类静态块 父类非静态变量 父类非静态块 父类构造函数 子类非静态变量 子类非静态块 子类构造函数</strong></p>
+</li>
+<li><p>首先实例化就是给对象分配内存，构造方法就是分配内存的实现，那么，子类如何才能更方便的分配内存呢？很显然，就是调用父类构造方法来分配父类部分的内存，然后再调用自己的构造方法来分配子类扩展的内存。否则，如果子类完全从头开始自己分配内存，那么继承父类又有什么优点呢？因为子类的父类部分是完全和父类一样的，你觉得有必要再自己从头开始分配内存吗？既然父类的内存分配已经有现成的方法，为什么不直接调用来分配父类部分的内存呢？</p>
+</li>
+<li><p>子类实例隐含的包含一个父类实例，拥有一个指向父类实例的引用，当子类实例调用父类中的方法or变量，这个父类必须有一个实例，so在子类实例生成的时候，父类的实例也就生成了啊。</p>
+</li>
+</ol>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="https://www.cnblogs.com/chenpi/p/5486096.html#_label0" target="_blank" rel="noopener">关于JAVA中子类和父类的构造方法</a></p>
+<p><a href="http://bbs.csdn.net/topics/380077372" target="_blank" rel="noopener">java实例化的时候为什么一定要调用父类的构造方法 </a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/java 构造函数/" data-id="cjabwqto30012hhyuob1u64fp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-java 基本数据类型 比较的问题" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/java 基本数据类型 比较的问题/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.851Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="java-基本数据类型-比较的问题"><a href="#java-基本数据类型-比较的问题" class="headerlink" title="java 基本数据类型 比较的问题"></a>java 基本数据类型 比较的问题</h1><p>问题代码</p>
+<pre><code>float i = -9999.9f;
+if (i == -9999.9) {  // 0 not equal
+    System.out.println(&quot;equal&quot;);
+}else
+{
+    System.out.println(&quot;not equal&quot;);
+}
+
+
+ float f = 1111.0f;//有小数点的话，必须要加f或者F
+float f2 = 1.1F;
+float f3 = 1.0f;
+float f4 = 1.5f;
+double d = 1111.0d;
+double d2 = 1.1;
+double d3 = 1d;
+double d4 = 1.5f;
+
+
+System.out.println(f==d);  // 1 false
+System.out.println(f2 == d2); // 2 false
+System.out.println(f3 == d3); // 3 true
+System.out.println(f4 == d4); // 4 true
+</code></pre><p>结果原因 猜测：<br>数字在计算机上的二进制存储问题</p>
+<h2 id="探讨float类型的数值，为什么两个float不能直接相等"><a href="#探讨float类型的数值，为什么两个float不能直接相等" class="headerlink" title="探讨float类型的数值，为什么两个float不能直接相等"></a>探讨float类型的数值，为什么两个float不能直接相等</h2><p>在程序编写的时候，我们会忽略一些细节上的问题，尤其是写java这种高级语言，久而久之，我们会对底层缺乏认识，这也是为什么前段时间会有人说java对学生有害的原因；近段时间在重新温习操作系统，感觉收获颇丰，甚是欣慰；</p>
+<p>　　<br>今天突然发现一个关于float的小问题，若不是仔细回忆，差点就忘记啦，所以来讨论下；</p>
+<pre><code>　　public class FloaTest{
+　　public static void main(String[] args){
+　　    float floatNumberA=1.0;
+　　    float floatNumberB=0;
+　　    for(int addCount=0;addCount&lt;10;addCount++){
+　　        floatNumberB+=0.1;
+　　    }
+　　    if(floatNumberB==floatNumberA){
+　　        System.out.println(&quot;equals&quot;);
+　　    }else{
+　　        System.out.println(&quot;unequals&quot;);
+　　    }
+　　    }
+　　}
+</code></pre><p>输出的结果却出乎我们意料，是unequals；　</p>
+<p>原因在于计算机在内存表示float的时候都是有误差的，我们应该想起在内存float的表示形式；</p>
+<p>下面引自一边别的文章；</p>
+<p>首先说一下原,反,补,移码. 移码其实就等于补码,只是符号相反. 对于正数而言,原,反,补码都一样, 对负数而言,反码除符号位外,在原码的基础上按位取反,补码则在反码的基础之上,在其最低位上加1,要求移码时,仍然是先求补码,再改符号.<br>　　<br>浮点数分为float和double,分别占4,8个字节,即32,64位. 我仅以32位的float为例,并附带说double.</p>
+<p>在IEEE754标准中,规定,float的32位这样分:</p>
+<p>符号位(S) 1 </p>
+<p>阶码(E)  8 </p>
+<p>尾数(M)  23
+　　</p>
+<p>这里应该注意三点:</p>
+<p>A,阶码是用移码表示的,这里会有一个127的偏移量,它的127相当于0,小于127时为负,大于127时为正,比如:10000001表示指数为129-127=2,表示真值为2^2,而01111110则表示2^(-1).</p>
+<p>B, 尾数全都是小数点后面的数,</p>
+<p>C, 但尾数中省略了一个1,因此尾数全为0时,也是1.0…00;</p>
+<p>接下来只要说明几个问题就明白了,以123.456为例,表示为二进制就是:N (2) = 1111011. 01110100101111001 ,这里,会右移6位,得到N (2) = 1.111011 01110100101111001*2^6; 这种形式就可以用于上图中的表示格式了.</p>
+<p>符号位(S) 0 阶码(E) 00000110 尾数(M) 11101101110100101111001</p>
+<p>注意到,上面的阶码第一位为0表正,尾数比N(2)表示的第一位少了个1,这就是上面说的默认为第一位为1. 由于在将十进制转为二进制的过程中,常常不能正好转得相等, (当然,像4.0这样的就不会有损失,而1.0/3.0这样的必然损失),所以就产生了浮点数的精度问题, 实际上,小数点后的23位二进制数,能影响的十进制数的前8位,这是为什么呢一般人在这时往往迷迷胡胡了,其实很简单,在上面表示的尾数中,是二进制的,小数点后有23位,最后一位的值为1时,它就是1/2^22=0.000000238实际取的时候肯定是0.0000002,也就是说,对于一个float型的浮点数,其有效的位数是从左到右数7位(包括缺省的1才是7位),当到达上面这个第8位时,就不可靠了,但我们的VC6可以输出最长的1.0/3.0为0.33333333333333331,这主要是编译器的问题了, 而并不是说浮点数小数点后的16位都有效. 如果不信的话,可以去试一下double类型的1.0/3.0, 得到的也将是小数点后17位.</p>
+<p>另外,编译器或电路板一般都有”去噪声”的”修正”能力,它能够使得超过7位的十进制数即使无效了也不会变得离谱,这也是上面为什么一直都是输出333而不是345之类的,. 可以这样试一下:</p>
+<p>　　float f=123456789;</p>
+<p>　　cout&lt;&lt;f&lt;&lt;endl;//这里肯定得到123456789.</p>
+<p>这里有一个被人遗忘的问题,就是10进制小数怎么变为2进制小数,其实很简单,就是将10进的小数部分不断乘以2,进位时就将对应的2进制位写入1. 因此将上面的N (2) = 1.111011 01110100101111001*2^6;再转回十进制数时,很可能已经不再是123.456了. 好,精度问题应该说清楚了. 下面说示数范围.</p>
+<p>阶码的示数位数是8位移码,最大为127最小为-127,这里的127用来作为2的指数,因此为2^127,约等于 1.7014<em>10^38, 而我们知道,float的示数范围约为-3.4</em>10^38——-3.4*10^38, 这是因为尾数的24位(默认第一位为1)全为1是,非常接近2, 1.11..11很明显约为2,因此浮点数的范围就出来了.</p>
+<p>double的情况与float完全相似,只是它的内在形式是</p>
+<p>符号位(S) 1 </p>
+<p>阶码(E)   11 </p>
+<p>尾数(M)  52</p>
+<p>主要的区别在于它的阶码有11位了, 这就有2^1023约等于 0.8572<em>10^308, 尾数53位约为2,故double的示数范围约为 -1.7</em>10^308.——1.7<em>10^308. 至于其精度,同样,1.0/2^51=4.4</em>10^(-16).小数点后15位有效,加上缺省的那一位,因此对于double浮点数,从左到右的16位数都是可靠的.</p>
+<p>有时,我们会听到”定点小数”这个词,单片机(如手机等)一般只使用定点数,迷糊的时候,我们会以为 float a=23.4; 这种是定点小数, float a=2.34E1这种为浮点数,其实这是错误的, 上面只是同一个浮点数的不同表示,都是浮点数. 定点小数是有这种提法,认为整就是定点小数,小数点定在个位后面,小数部分为0.也可认为纯小数是定点小数,但它只能表示小于1的纯小数.</p>
+<p>然后再说一下C/C++中的几个函数, C++中默认输出小数点后的5位小数,但可以设置,有两种方法:调用setpression或者使用cout.pression,但效果是不同的:</p>
+<p>float mm=123.456789f;</p>
+<p>cout&lt;&lt;mm&lt;&lt;endl; //123.457            虽说默认为不数点后5位,但只是整数部分只有一位才这样.</p>
+<p>setprecision(10);                               //设置小数点后的位数,但当整数部分有两位时,与默认情况没什么两样,不起作用.</p>
+<p>cout&lt;&lt;mm&lt;&lt;endl; //123.457</p>
+<p>cout.precision(4);                              //设置总的位数.</p>
+<p>cout&lt;&lt;mm&lt;&lt;endl; //123.4      总之效果是比较怪的,个人认为虽然这样显得不够确定,但实为硬件系统所限.无可厚非.</p>
+<p>对于0的实际表示,有人认为+0一般能绝对为0,而-0则可能表示一个极小的数. 为此,本人想到了一种很好的验证办法,证明了不管+0还是-0,它都是2^(-127),代码如下:</p>
+<p>float fDigital = 0.0f</p>
+<p>unsigned long nMem;// 临时变量，用于存储浮点数的内存数据</p>
+<p>// 将内存按位复制到临时变中，以便取用,此时的nMem并不等于fDigital了,它是按位复制的。</p>
+<p>nMem = <em>(unsigned long</em>)&fDigital;</p>
+<p>cout&lt;&lt;nMem&lt;&lt;endl; //一般得到一个很大的整数.</p>
+<p>bitset<32>mybit(nMem);//妙在此处,这里的输出就是32float的内存表示了.终于完全直观地看到了.</32></p>
+<p>cout&lt;&lt;mybit&lt;&lt;endl;   //00000000000000000000000000000000 用-0.0来试,也是如此</p>
+<p>如果你还认为上面那一长串的0表示的是绝对的0,那么请重新看本文. 事实上,本人的这种做法是比较巧妙的,将上面的fDigital用任何其它浮点数表示,这个bitset数都可以反映出它的内存表示.</p>
+<p>有移码表示阶码有是有原因的,主要是移码便于对阶操作,从而比较两个浮点数的大小. 这里要注意的是,阶码不能达到11111111的形式,IEEE规定,当编译器遇到阶码为0XFF时,即调用溢出指令. 总之,阶码化为整数时,范围是:-126~127</p>
+<p>最后,有一个往往高手也汗颜的地方,一定要记住,浮点数没有无符号型的usinged float/double是错误的.</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/z69183787/article/details/53286492" target="_blank" rel="noopener">Java中的浮点数比较 == equals 和 compare</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/java 基本数据类型 比较的问题/" data-id="cjabwqto20011hhyuxeemjmcb" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-java关键字static和final" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/java关键字static和final/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.839Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="java-关键字-static-final"><a href="#java-关键字-static-final" class="headerlink" title="java 关键字 static final"></a>java 关键字 static final</h1><h2 id="final"><a href="#final" class="headerlink" title="final"></a>final</h2><ol>
+<li>修饰类，该类不能被继承，该类的方法默认都是final</li>
+<li>修饰方法，该方法不能重写，但可以继承</li>
+<li>修饰属性，该属性值不能改变</li>
+<li>修饰函数参数，可读取该参数，但不能改变其值</li>
+</ol>
+<h2 id="static"><a href="#static" class="headerlink" title="static"></a>static</h2><ol>
+<li>修饰属性（静态变量），在内存中只有一份拷贝，类级别</li>
+<li>修饰方法（静态方法），方法必须实现</li>
+<li>代码块</li>
+</ol>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://lavasoft.blog.51cto.com/62575/18771/" target="_blank" rel="noopener">Java关键字final、static使用总结</a><br><a href="http://blog.csdn.net/tengdazhang770960436/article/details/25156743" target="_blank" rel="noopener"> static、final、static final 用法</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/java关键字static和final/" data-id="cjabwqto60015hhyuqnisck55" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Java HashMap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Java HashMap/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.835Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java-HashMap"><a href="#Java-HashMap" class="headerlink" title="Java HashMap"></a>Java HashMap</h1><h2 id="集合类的整体架构"><a href="#集合类的整体架构" class="headerlink" title="集合类的整体架构"></a>集合类的整体架构</h2><ul>
+<li>Abstract Collection<ul>
+<li>Abstract List<ul>
+<li>Abstract Sequential List<ul>
+<li>Linked List  </li>
+</ul>
+</li>
+<li>Array List</li>
+</ul>
+</li>
+<li>Abstract Set<ul>
+<li>Hash Set</li>
+<li>Tree Set</li>
+</ul>
+</li>
+<li>Abstract Queue<ul>
+<li>Priority Queue</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Abstract Map<ul>
+<li>Hash Map</li>
+<li>Tree Map</li>
+</ul>
+</li>
+</ul>
+<h2 id="HashMap-详解"><a href="#HashMap-详解" class="headerlink" title="HashMap 详解"></a>HashMap 详解</h2><p>HashMap 和 HashSet 是 Java Collection Framework 的两个重要成员，其中 HashMap 是 Map 接口的常用实现类，HashSet 是 Set 接口的常用实现类。虽然 HashMap 和 HashSet 实现的接口规范不同，但它们底层的 Hash 存储机制完全一样，甚至 <strong> HashSet 本身就采用 HashMap 来实现的(使用HashMap的key来存储HashSet的值，value是一个无意义的对象) </strong></p>
+<pre><code>HashMap&lt;String , Double&gt; map = new HashMap&lt;String , Double&gt;();   
+map.put(&quot;高数&quot; , 60.0);   
+map.put(&quot;大英&quot; , 89.0);   
+map.put(&quot;大物&quot; , 78.2);   
+</code></pre><p>HashMap 采用一种所谓的“Hash 算法”来决定每个元素的存储位置。 </p>
+<p>当程序执行 map.put(“高数” , 60.0); 时，系统将调用”高数”的 hashCode() 方法得到其 hashCode 值——每个 Java 对象都有 hashCode() 方法，都可通过该方法获得它的 hashCode 值。得到这个对象的 hashCode 值之后，系统会根据该 hashCode 值来决定该元素的存储位置。 </p>
+<h2 id="HashMap-将可变对象作为Key"><a href="#HashMap-将可变对象作为Key" class="headerlink" title="HashMap 将可变对象作为Key"></a>HashMap 将可变对象作为Key</h2><h3 id="可变对象"><a href="#可变对象" class="headerlink" title="可变对象"></a>可变对象</h3><p>可变对象是指创建后自身状态能改变的对象。换句话说，可变对象是该对象在创建后它的哈希值可能被改变。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>重写hashcode 和 equal </p>
+<pre><code>@Override
+public int hashCode() {
+    int result = 17;
+    result = result * 31 + zoom;
+    result = result * 31 + x;
+    result = result * 31 + y;
+    return result;
+}
+
+@Override
+public boolean equals(Object o) {
+    if (o == this) {
+        return true;
+    }
+
+    if (!(o instanceof LevelData))
+    {
+        return false;
+    }
+
+    LevelData other = (LevelData) o;
+
+    return zoom == other.zoom &amp;&amp; x == other.x &amp;&amp; y == other.y;
+}
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.cnblogs.com/0201zcr/p/4769108.html" target="_blank" rel="noopener">java HashMap那点事</a><br><a href="http://www.cnblogs.com/0201zcr/p/4810813.html?tvd" target="_blank" rel="noopener">HashMap的key可以是可变的对象吗？？？</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Java HashMap/" data-id="cjabwqtn8000fhhyuwn4vaq27" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Intent传递数据问题" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Intent传递数据问题/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.823Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Intent-传递数据"><a href="#Intent-传递数据" class="headerlink" title="Intent 传递数据"></a>Intent 传递数据</h1><h2 id="activity-之间通过intent传递TreeMap时出现-java-lang-ClassCastException-java-util-HashMap-cannot-be-cast-to-java-util-TreeMap"><a href="#activity-之间通过intent传递TreeMap时出现-java-lang-ClassCastException-java-util-HashMap-cannot-be-cast-to-java-util-TreeMap" class="headerlink" title="activity 之间通过intent传递TreeMap时出现 java.lang.ClassCastException: java.util.HashMap cannot be cast to java.util.TreeMap"></a>activity 之间通过intent传递TreeMap时出现 java.lang.ClassCastException: java.util.HashMap cannot be cast to java.util.TreeMap</h2><p>The first link that Emmanuel provided is the exact same issue you are having. It doesn’t specifically mention that exact error but it is implied.</p>
+<p>The issue is that when your TreeMap is serialized it will come back as a HashMap. Completely explained by this answer which Emmanuel also provided.</p>
+<p>So simply doing the follow shall resolve your issue:</p>
+<pre><code>TreeMap&lt;Long, Long&gt; results = new TreeMap&lt;Long, Long&gt;((HashMap&lt;Long, Long&gt;) getIntent().getSerializableExtra(&quot;results&quot;));
+</code></pre><p>Basically populates your results TreeMap with the HashMap returned from the bundle.</p>
+<p>Also upvote those answers in the links provided if this resolves your issue.</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://stackoverflow.com/questions/22867427/java-lang-classcastexception-java-util-hashmap-cannot-be-cast-to-java-util-tree" target="_blank" rel="noopener">java.lang.ClassCastException: java.util.HashMap cannot be cast to java.util.TreeMap [duplicate]</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Intent传递数据问题/" data-id="cjabwqtn7000ehhyu9ywvg77t" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-github github常见操作和常见错误" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/github github常见操作和常见错误/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.815Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="github-github常见操作和常见错误"><a href="#github-github常见操作和常见错误" class="headerlink" title="github github常见操作和常见错误"></a>github github常见操作和常见错误</h1><p>Quick setup — if you’ve done this kind of thing before<br> Set up in Desktop    or<br>HTTPS</p>
+<pre><code>https://github.com/littlediv/DownloadProgress.git
+</code></pre><p> SSH</p>
+<pre><code>git@github.com:littlediv/DownloadProgress.git
+</code></pre><p>We recommend every repository include a README, LICENSE, and .gitignore.<br>…or create a new repository on the command line</p>
+<pre><code>echo &quot;# DownloadProgress&quot; &gt;&gt; README.md
+git init
+git add README.md
+git commit -m &quot;first commit&quot;
+git remote add origin git@github.com:littlediv/DownloadProgress.git
+git push -u origin master
+</code></pre><p>…or push an existing repository from the command line</p>
+<pre><code>git remote add origin git@github.com:littlediv/DownloadProgress.git
+git push -u origin master
+</code></pre><p>…or import code from another repository<br>You can initialize this repository with code from a Subversion, Mercurial, or TFS project.</p>
+<p>Import code</p>
+<h2 id="错误提示：fatal-remote-origin-already-exists"><a href="#错误提示：fatal-remote-origin-already-exists" class="headerlink" title="错误提示：fatal: remote origin already exists"></a>错误提示：fatal: remote origin already exists</h2><p>如果输入$ git remote add origin git@github.com:djqiang（github帐号名）/gitdemo（项目名）.git </p>
+<p>提示出错信息：fatal: remote origin already exists.</p>
+<p>解决办法如下：</p>
+<p>1、先输入$ git remote rm origin</p>
+<p>2、再输入$ git remote add origin git@github.com:djqiang/gitdemo.git 就不会报错了！</p>
+<p> 3、如果输入$ git remote rm origin 还是报错的话，error: Could not remove config section ‘remote.origin’. 我们需要修改gitconfig文件的内容</p>
+<p>4、找到你的github的安装路径，我的是C:\Users\ASUS\AppData\Local\GitHub\PortableGit_ca477551eeb4aea0e4ae9fcd3358bd96720bb5c8\etc</p>
+<p>5、找到一个名为gitconfig的文件，打开它把里面的[remote “origin”]那一行删掉就好了</p>
+<h2 id="github提示Permission-denied-publickey-，如何才能解决？"><a href="#github提示Permission-denied-publickey-，如何才能解决？" class="headerlink" title="github提示Permission denied (publickey)，如何才能解决？"></a>github提示Permission denied (publickey)，如何才能解决？</h2><pre><code>$ git push -u origin master
+Permission denied (publickey).
+fatal: Could not read from remote repository.
+</code></pre><p>1、创建SSH密钥</p>
+<p>1）打开终端，输入命令 ssh-keygen -t rsa -C “66<strong>**</strong>33@163.com” 然后按回车键，双引号里的邮箱换成自己的；</p>
+<p>2）按回车保存到默认位置，再稍等出来提示输入密码短语，输完按回车要输两遍；它用来加密私钥，也就是以后使用私钥的时候要输这个密码；</p>
+<p>3）稍等出来提示成功，密钥存放在自己主文件夹的.ssh文件夹中</p>
+<p>4）打开文件管理器，显示隐藏文件后，可以看到这个文件夹中有两个文件，一个私钥一个公钥，把这个文件夹备份一下.id_rsa 是密钥 ，id_rsa.pub是公钥。<br>打开公钥文件，把里面的内容全部选中以后复制一下，等会要用到；</p>
+<p>5）接下来登录 github，在右上角自己的用户名旁边找到扳手图标设置账户，在设置页面右边找到 SSH  Keys，点击进入；<br>6）点击ADD SSH key</p>
+<p>7）在 Title 里输一个名称，下面的 Key 里一会粘贴自己的公钥；</p>
+<p>8）到刚才的.ssh文件夹中，双击打开自己的公钥文件 id_rsa.pub，复制里面的所有内容，然后粘贴到刚才的密钥导入框中，然后点下边的“Add Key”导入密钥；</p>
+<h2 id="访问受限"><a href="#访问受限" class="headerlink" title="访问受限"></a>访问受限</h2><pre><code>$ ssh -T git@github.com
+Permission denied (publickey).
+</code></pre><p>生成的 秘钥 文件位置不正确 /c/Users/mac/.ssh/id_rsa </p>
+<pre><code>$ ssh -T -v git@github.com
+OpenSSH_7.1p2, OpenSSL 1.0.2d 9 Jul 2015
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: Connecting to github.com [192.30.255.112] port 22.
+debug1: Connection established.
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_rsa type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_rsa-cert type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_dsa type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_dsa-cert type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ecdsa type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ecdsa-cert type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ed25519 type -1
+debug1: key_load_public: No such file or directory
+debug1: identity file /c/Users/mac/.ssh/id_ed25519-cert type -1
+debug1: Enabling compatibility mode for protocol 2.0
+debug1: Local version string SSH-2.0-OpenSSH_7.1
+debug1: Remote protocol version 2.0, remote software version libssh_0.7.0
+debug1: no match: libssh_0.7.0
+debug1: Authenticating to github.com:22 as &apos;git&apos;
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: server-&gt;client chacha20-poly1305@openssh.com &lt;implicit&gt; none
+debug1: kex: client-&gt;server chacha20-poly1305@openssh.com &lt;implicit&gt; none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: Server host key: ssh-rsa SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8
+debug1: Host &apos;github.com&apos; is known and matches the RSA host key.
+debug1: Found key in /c/Users/mac/.ssh/known_hosts:2
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: SSH2_MSG_SERVICE_REQUEST sent
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+debug1: Authentications that can continue: publickey
+debug1: Next authentication method: publickey
+debug1: Trying private key: /c/Users/mac/.ssh/id_rsa
+debug1: Trying private key: /c/Users/mac/.ssh/id_dsa
+debug1: Trying private key: /c/Users/mac/.ssh/id_ecdsa
+debug1: Trying private key: /c/Users/mac/.ssh/id_ed25519
+debug1: No more authentication methods to try.
+Permission denied (publickey).
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/dengjianqiang2011/article/details/9260435" target="_blank" rel="noopener">github常见操作和常见错误！错误提示：fatal: remote origin already exists.</a></p>
+<p><a href="https://www.zhihu.com/question/21402411" target="_blank" rel="noopener">github提示Permission denied (publickey)，如何才能解决？</a></p>
+<p><a href="http://blog.csdn.net/makenothing/article/details/8450417" target="_blank" rel="noopener">创建SSH密钥</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/github github常见操作和常见错误/" data-id="cjabwqto10010hhyuya1cbel9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-getColor过时" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/getColor过时/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.811Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="getColor过时"><a href="#getColor过时" class="headerlink" title="getColor过时"></a>getColor过时</h1><p>getColor方法在6.0中已经过时:</p>
+<pre><code>@ColorInt
+@Deprecated
+public int getColor(@ColorRes int id) throws NotFoundException {
+    return getColor(id, null);
+}
+</code></pre><p>可以参考以下方法:<br>使用</p>
+<pre><code>ContextCompat.getColor(context, R.color.my_color)
+</code></pre><p>This is the source code:</p>
+<p>//源码</p>
+<pre><code>public static final int getColor(Context context, int id) {
+    final int version = Build.VERSION.SDK_INT;
+    if (version &gt;= 23) {
+        return ContextCompatApi23.getColor(context, id);
+    } else {
+        return context.getResources().getColor(id);
+    }
+}
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/getColor过时/" data-id="cjabwqto1000zhhyu2p3tooui" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-curl 相关命令" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/curl 相关命令/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.807Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="curl-相关命令"><a href="#curl-相关命令" class="headerlink" title="curl 相关命令"></a>curl 相关命令</h1><h2 id="curl-I-“http-www-baidu-com“"><a href="#curl-I-“http-www-baidu-com“" class="headerlink" title="curl -I “http://www.baidu.com“"></a>curl -I “<a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a>“</h2><p>只返回 header 相关信息</p>
+<pre><code>C:\Users\mac&gt;curl -I &quot;http://www.xinhong.net/app/xinHongMeteo.apk&quot;
+HTTP/1.1 200 OK
+Server: nginx/1.10.1
+Date: Thu, 26 Oct 2017 07:24:27 GMT
+Content-Type: application/octet-stream
+Content-Length: 16997573
+Last-Modified: Mon, 16 Oct 2017 08:01:27 GMT
+Connection: keep-alive
+ETag: &quot;59e46757-1035cc5&quot;
+Accept-Ranges: bytes
+</code></pre><h2 id="C-Users-mac-gt-curl-–range-0-99-“http-httpd-apache-org-images-httpd-logo-wide-new-png“"><a href="#C-Users-mac-gt-curl-–range-0-99-“http-httpd-apache-org-images-httpd-logo-wide-new-png“" class="headerlink" title="C:\Users\mac&gt;curl –range 0-99  “http://httpd.apache.org/images/httpd_logo_wide_new.png“"></a>C:\Users\mac&gt;curl –range 0-99  “<a href="http://httpd.apache.org/images/httpd_logo_wide_new.png" target="_blank" rel="noopener">http://httpd.apache.org/images/httpd_logo_wide_new.png</a>“</h2><p>发送字节范围下载，下载最开始的99字节</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/curl 相关命令/" data-id="cjabwqto0000yhhyuamchn7o6" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">__('next') &raquo;</a>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

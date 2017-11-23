@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Android Stuido 依赖包网络不好，使用本地包在AndroidStudio中如何显示出依赖库的本地存储路径task showMeCache &amp;lt;&amp;lt; { configurations.compile.each { println it } } 将代码放在 Module 的 build.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/android studio依赖包/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Android Stuido 依赖包网络不好，使用本地包在AndroidStudio中如何显示出依赖库的本地存储路径task showMeCache &amp;lt;&amp;lt; { configurations.compile.each { println it } } 将代码放在 Module 的 build.gradle 最下方然后在控制台执行 gradle showMeCache 即可看到所有依赖对应">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.703Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="Android Stuido 依赖包网络不好，使用本地包在AndroidStudio中如何显示出依赖库的本地存储路径task showMeCache &amp;lt;&amp;lt; { configurations.compile.each { println it } } 将代码放在 Module 的 build.gradle 最下方然后在控制台执行 gradle showMeCache 即可看到所有依赖对应">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-android studio依赖包" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android studio依赖包/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.703Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-Stuido-依赖包"><a href="#Android-Stuido-依赖包" class="headerlink" title="Android Stuido 依赖包"></a>Android Stuido 依赖包</h1><h2 id="网络不好，使用本地包"><a href="#网络不好，使用本地包" class="headerlink" title="网络不好，使用本地包"></a>网络不好，使用本地包</h2><h3 id="在AndroidStudio中如何显示出依赖库的本地存储路径"><a href="#在AndroidStudio中如何显示出依赖库的本地存储路径" class="headerlink" title="在AndroidStudio中如何显示出依赖库的本地存储路径"></a>在AndroidStudio中如何显示出依赖库的本地存储路径</h3><pre><code>task showMeCache &lt;&lt; {
+configurations.compile.each { println it }
+}
+</code></pre><p>将代码放在 Module 的 build.gradle 最下方<br>然后在控制台执行</p>
+<pre><code>gradle showMeCache
+</code></pre><p>即可看到所有依赖对应的路径</p>
+<pre><code>:app:showMeCache
+/Users/mao/workpace/person/AppPlus/app/libs/lite-orm-1.7.0.jar
+/Users/mao/workpace/person/AppPlus/app/libs/umeng-update-v2.6.0.1.jar
+/Users/mao/Downloads/android/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.1.1/appcompat-v7-23.1.1.aar
+/Users/mao/Downloads/android/sdk/extras/android/m2repository/com/android/support/design/23.1.1/design-23.1.1.aar
+/Users/mao/.gradle/caches/modules-2/files-2.1/com.jenzz/materialpreference/1.3/def38f1784f5f789b10ed388e385f7857e765405/materialpreference-1.3.aar
+</code></pre><p>参考信息： <a href="http://blog.csdn.net/asd6340370/article/details/51829847" target="_blank" rel="noopener">在AndroidStudio中如何显示出依赖库的本地存储路径</a></p>
+<p>依赖路径（约在如下目录 androidSDK 和用户 .gradle</p>
+<ol>
+<li>D:\Android\Sdk\extras\android\m2repository\com\android\support</li>
+<li>C:\Users\mac.gradle\caches\modules-2\files-2.1</li>
+</ol>
+<p>（在AndroidStudio中的”External Libraries”下有引用的library的列表, 选择某个library右键-&gt;”Library Properties …”就可以看到你引用的库本地的存放路径）</p>
+<h3 id="添加本地-arr-文件依赖"><a href="#添加本地-arr-文件依赖" class="headerlink" title="添加本地 arr 文件依赖"></a>添加本地 arr 文件依赖</h3><ol>
+<li>在Module中建立”libs”目录(如果没有的话)</li>
+<li>把aar文件拷入libs目录(假设为abc.aar) </li>
+<li><p>在Module的build.gradle中加入：<br> repositories {</p>
+<p> flatDir {</p>
+<p> dirs ‘libs’</p>
+<p> }</p>
+<p> }    </p>
+</li>
+<li><p>在Module的build.gradle中的dependencies中加入：</p>
+<p> compile(name:’abc’,ext:’aar’)</p>
+</li>
+</ol>
+<p>参考信息： <a href="http://www.jianshu.com/p/799887025ff7" target="_blank" rel="noopener">Android Studio如何加本地aar文件依赖</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android studio依赖包/" data-id="cjabwqtnr000thhyuok5k5gxn" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/Android studio 存储/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/android studio wrapper 设置/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

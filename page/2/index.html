@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-单例模式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/单例模式/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.947Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h1><p>单例设计模式</p>
+<p>Singleton是一种创建型模式，指某个类采用Singleton模式，则在这个类被创建后，只可能产生一个实例供外部访问，并且提供一个全局的访问点。</p>
+<p>核心知识点如下：</p>
+<p>(1) 将采用单例设计模式的类的构造方法私有化（采用private修饰）。</p>
+<p>(2) 在其内部产生该类的实例化对象，并将其封装成private static类型。</p>
+<p>(3) 定义一个静态方法返回该类的实例。</p>
+<pre><code>/** 
+ * 方法一
+ * 单例模式的实现：饿汉式,线程安全 但效率比较低 
+ */  
+public class SingletonTest {  
+
+    // 定义一个私有的构造方法
+    private SingletonTest() {  
+    }  
+
+    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
+    private static final SingletonTest instance = new SingletonTest();  
+
+    // 静态方法返回该类的实例
+    public static SingletonTest getInstancei() {  
+        return instance;  
+    }  
+
+}
+</code></pre><p>方法一就是传说的中的饿汉模式</p>
+<p>优点是：写起来比较简单，而且不存在多线程同步问题，避免了synchronized所造成的性能问题；</p>
+<p>缺点是：当类SingletonTest被加载的时候，会初始化static的instance，静态变量被创建并分配内存空间，从这以后，这个static的instance对象便一直占着这段内存（即便你还没有用到这个实例），当类被卸载时，静态变量被摧毁，并释放所占有的内存，因此在某些特定条件下会耗费内存。</p>
+<pre><code>/**  
+ *方法二
+ * 单例模式的实现：饱汉式,非线程安全   
+ *   
+ */  
+public class SingletonTest {
+
+    // 定义私有构造方法（防止通过 new SingletonTest()去实例化）
+    private SingletonTest() {   
+    }   
+
+    // 定义一个SingletonTest类型的变量（不初始化，注意这里没有使用final关键字）
+    private static SingletonTest instance;   
+
+    // 定义一个静态的方法（调用时再初始化SingletonTest，但是多线程访问时，可能造成重复初始化问题）
+    public static SingletonTest getInstance() {   
+        if (instance == null)   
+            instance = new SingletonTest();   
+        return instance;   
+    }   
+}
+</code></pre><p>方法二就是传说的中的饱汉模式</p>
+<p>优点是：写起来比较简单，当类SingletonTest被加载的时候，静态变量static的instance未被创建并分配内存空间，当getInstance方法第一次被调用时，初始化instance变量，并分配内存，因此在某些特定条件下会节约了内存；</p>
+<p>缺点是：并发环境下很可能出现多个SingletonTest实例。</p>
+<pre><code>/**  
+ *方法三
+ * 单例模式的实现：饱汉式,线程安全简单实现   
+ *   
+ */  
+public class SingletonTest {
+
+    // 定义私有构造方法（防止通过 new SingletonTest()去实例化）
+    private SingletonTest() {   
+    }   
+
+    // 定义一个SingletonTest类型的变量（不初始化，注意这里没有使用final关键字）
+    private static SingletonTest instance;   
+
+    // 定义一个静态的方法（调用时再初始化SingletonTest，使用synchronized 避免多线程访问时，可能造成重的复初始化问题）
+    public static synchronized  SingletonTest getInstance() {   
+        if (instance == null)   
+            instance = new SingletonTest();   
+        return instance;   
+    }   
+}
+</code></pre><p>方法三为方法二的简单优化</p>
+<p>优点是：使用synchronized关键字避免多线程访问时，出现多个SingletonTest实例。</p>
+<p>缺点是：同步方法频繁调用时，效率略低。</p>
+<pre><code>/**  
+ * 方法四
+ * 单例模式最优方案
+ * 线程安全  并且效率高  
+ *  
+ */  
+public class SingletonTest { 
+
+    // 定义一个私有构造方法
+    private SingletonTest() { 
+
+    }   
+    //定义一个静态私有变量(不初始化，不使用final关键字，使用volatile保证了多线程访问时instance变量的可见性，避免了instance初始化时其他变量属性还没赋值完时，被另外线程调用)
+    private static volatile SingletonTest instance;  
+
+    //定义一个共有的静态方法，返回该类型实例
+    public static SingletonTest getIstance() { 
+        // 对象实例化时与否判断（不使用同步代码块，instance不等于null时，直接返回对象，提高运行效率）
+        if (instance == null) {
+            //同步代码块（对象未初始化时，使用同步代码块，保证多线程访问时对象在第一次创建后，不再重复被创建）
+            synchronized (SingletonTest.class) {
+                //未初始化，则初始instance变量
+                if (instance == null) {
+                    instance = new SingletonTest();   
+                }   
+            }   
+        }   
+        return instance;   
+    }   
+}
+</code></pre><p>方法四为单例模式的最佳实现。内存占用地，效率高，线程安全，多线程操作原子性。</p>
+<p>（事实上，可以通过Java反射机制来实例化private类型的构造方法，此时基本上会使所有的Java单例实现失效。本帖不讨论反射情况下问题，默认无反射，也是常见的面试已经应用场景）</p>
+<pre><code>/**  
+ * 方法五 枚举
+ *  
+ */  
+public enum Singleton {  
+    INSTANCE;  
+    public void whateverMethod() {  
+    }  
+}  
+</code></pre><p> 这种方式是Effective Java作者Josh Bloch 提倡的方式，它不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象，可谓是很坚强的壁垒啊，不过，个人认为由于1.5中才加入enum特性，用这种方式写不免让人感觉生疏，在实际工作中，我也很少看见有人这么写过。</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.cnblogs.com/yinxiaoqiexuxing/p/5605338.html" target="_blank" rel="noopener">JAVA设计模式–单例模式</a></p>
+<p><a href="http://cantellow.iteye.com/blog/838473" target="_blank" rel="noopener">单例模式的七种写法</a></p>
+<p><a href="http://www.cnblogs.com/chq3272991/p/5302527.html" target="_blank" rel="noopener">几种单例模式解析</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/单例模式/" data-id="cjabwqtob001ahhyu6i76zqb3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-充分条件必要条件" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/充分条件必要条件/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.943Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>充分条件：有甲这个条件一定会推出乙这个结果，有乙这个结果不一定是　　　　　甲这唯一个条件．关联词是　　只要……就……</p>
+<p>　　　　　　　如　　只要天下雨，地就会湿。</p>
+<p>　　　　　有“下雨”这个条件就一定有“地湿”这个结果，但“地湿”这个结果不一定就是“天下雨”造成的，也许还可能有其他的条件原因，如洒水车洒的、别人喷的等等。</p>
+<p>必要条件：有甲这个条件不一定能推出乙这个结果，但乙这个结果一定要　　　　　有甲这个条件。关联词是　　只有……才……　</p>
+<p>　　　　　　　如　　只有阳光充足，菜才能长得好。　　　　　　　　　　　　　有“阳光充足”这个条件“菜”不一定就长得好，还需要施肥、浇水等其他条件。但“菜”要长得好一定要有“阳光充足”这个条件。</p>
+<p>充要条件：即充分必要条件。或者说是无条件的。</p>
+<p>　　　　　关联词是　　不论（不管）……都……　　　　　　　　　　　　　　　　　如　　不论天气如何，他都按时到校。　　　　　　　　　　　　　就是说“天气如何”无所谓什么条件，都会有“按时到校”的结果的。反过来“按时到校”也不需要什么“天气”。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/充分条件必要条件/" data-id="cjabwqtoa0019hhyu80fx54jh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-为什么年龄越大我们感觉时间过得越快？" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/为什么年龄越大我们感觉时间过得越快？/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.931Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="为什么年龄越大我们感觉时间过得越快？"><a href="#为什么年龄越大我们感觉时间过得越快？" class="headerlink" title="为什么年龄越大我们感觉时间过得越快？"></a>为什么年龄越大我们感觉时间过得越快？</h1><p>时间过得真快，2017新年就这么过去了，春节就在眼前，2016年春节仿佛就在昨天。回想小的时候，天天盼着长大，盼着过年，从一个春节到下一个春节的等待是如此的漫长，仿佛就是一个永恒。</p>
+<p>我们知道，时间是匀速流逝的，为什么不同年龄对于时间的体验有如此巨大的差异，随着年龄增大为什么感觉时间过得越来越快？</p>
+<p>要回答这个问题，需要我们从时间本身说起。</p>
+<p>什么是时间？</p>
+<p>在现代物理学语境下，时间是一个多含义概念。然而对于人生来说，时间就是以等速向前不停流逝的生命。</p>
+<p>人类如何测定和记录时间？</p>
+<p>对于地球人来说，以环境中可观测的客观存在物作为参照来对时间进行测定和记录。具体来说就是以地球和日月星辰周期性运行将时间分割测定，并以年月日时分秒等单位加以记录。具体的方法从古代的日晷、沙漏到近现代的单摆钟、石英钟及原子钟。</p>
+<p>日晷</p>
+<p>沙漏</p>
+<p>虽然各种方法的精确度存在差异，但是都是以客观存在、相对恒定的参照，因此获得的时间是相对客观的，本质上是以等速向前不停流逝的。</p>
+<p>人对时间的体验是一种主观感受</p>
+<p>不同于使用工具对时间的测定和记录，人对时间的体验却是一种主观感受，以这种主观感受来衡量时间运行速度同样需要有一个参照系，需要一个标尺。</p>
+<p>人在不同时间和情形下，所采用的参照标尺是不同的；而且对于时间的体验是回顾性的，包括当时的感受（依赖于短期记忆）和过去的回忆（依赖于长期记忆）记忆，因而体验到时间运行的速度自然也就是可变的。不同年龄、环境和情绪状态下感觉时间运行速度是不同的，比如，随着年龄增大感觉时间过得越快，快乐的时光总是短暂的，困苦环境下总是度日如年，等。</p>
+<p>为什么年龄越大我们感觉时间过得越快？</p>
+<p>具体到这个问题，科学家们提出过众多理论，本质上仍不外乎时间体验参照尺度的差异。具体来说，这些理论包括：</p>
+<ol>
+<li>年龄越大对时间关注越少？</li>
+</ol>
+<p>对于孩子们来说，他们的生活要简单的多，没有那么多琐碎复杂事物来干扰，因而对事情的细节关注度明显高于成年人。对于时间也是一样，比如由于他们一直盼望着过年，因而从进入腊月甚至更早的时间就掰着手指开始倒计时。</p>
+<p>相反，成年人则忙碌的多，各种生活、工作及其他琐事塞满了整个生活，因而无暇专注于时间的流逝；尤其是对于多数退休的老年人来说，时间观念会进一步淡化。</p>
+<p>这样，相对于孩子们来说，大人们越是无暇关注时间等于说对时间流逝速度体验的参照尺度越小，时间就这样在忙碌中不知不觉度过，当回头看的时候，获得的时间体验自然是飞速流逝的。</p>
+<p>这种说法表面看似乎很有道理，也是很多人的知觉经验。然而，事实似乎并非如此。在1996年报告的一项测试中，有心理学家要求25名19~24岁的年轻人，和15名60~80的老年人用读秒的方法来计数3分钟的时间。结果，年轻人平均计数为3分钟3秒，而老年人为3分钟40秒。其中，老年受试者中包括还没有退休的职员和大学教师，他们日常时间观念并不低于年轻人。</p>
+<p>说明，老年人对时间的感受的确快于年轻人，这种差异并非来源于时间观念的不同。</p>
+<ol>
+<li>年龄越大，体内生物钟越慢。</li>
+</ol>
+<p>我们知道，人体的各种生理活动都具有自身的时间节律，这就是所谓人体生物钟。比如，昼夜节律、心跳呼吸节律、某些代谢节律等。</p>
+<p>人们对时间体验以体内某种生物钟作为参照标尺是再自然不过的事情。因而，有人提出一种理论认为，随着年龄的增大，新陈代谢减慢，心跳和呼吸也就相应的减慢；相反，在儿童心跳呼吸速度显著快于成年人，更快于老年人。如果我们队时间的感受以心跳呼吸速度作为参照标尺，那么随着年龄等大，自然会感觉时间过得更快。</p>
+<p>心跳、呼吸是明显可以感受到的生理节律，而科学家们更关注的是另一种重要的生物钟——由中脑神经元分泌多巴胺控制体内内在生物节律。</p>
+<p>几十年前就有科学家观察到多巴胺于体内某些生理性节律的关系并进行了大量研究。最近由葡萄牙科学家进行的一项实验为这个理论提供了坚实的证据。研究人员使用了一种被称为光遗传学的技术——这种技术可以使用光刺激来精准的操纵神经元生物学行为——当研究人员刺激或抑制中脑神经元增加或减低多巴胺产生时，小鼠可以再秒的尺度上高估或低估时间流逝速度。</p>
+<p>多巴胺</p>
+<p>结果显示，多巴胺似乎减慢了内部生物钟。我们知道，随着年龄的增大，人脑内多巴胺的产生分泌降低。那么，对于老年人来说，多巴胺分泌减低意味着生物钟的相对加速，那么以这种生物钟作为时间体验参照标尺，自然会感觉时间加速流逝。</p>
+<ol>
+<li>年龄越大越不注重细节，感受到的时间流逝也越快。</li>
+</ol>
+<p>另一种理论认为，我们对时间的体验与学习吸收新的事物包含信息数量有关。</p>
+<p>早在20世纪60年代就有心理学家做过这样的实验，向受试者播放含有不同信息的磁带，比如简单击打声和家庭噪声，然后由受试者估计每种声音持续的时间。结果发现，相对于简单和慢速的击打声，受试者普遍高估了更复杂声音所持续的时间。在使用素描和油画的实验中也得出相同的结果，对于最复杂的图像受试者明显高估了他们所花费的时间。</p>
+<p>实验说明，对于包含更多新信息的刺激，我们的大脑需要更长的时间来处理，从而使感受到经历的时间更长。而我们对于时间的体验是通常是对于过去经历的回顾，这样，对于包含更复杂信息经历时间的估计高于实际，那么当回头看时，自然就感受时间过得更慢。</p>
+<p>对于年龄越小的孩子来说，世界是全新的，他们对环境的观察对事物的学习自然更加细致入微。相反，当我们越来越老，（自以为）对于世界就越来越熟悉，自然而然不会关注早已了然于胸的细节。</p>
+<p>这样，当回想过往时，老年人对时间的体验自然快于孩子们。</p>
+<p>4 记忆对时间体验的影响。</p>
+<p>我们对时间体验更多时候时依赖于对过去的回顾，因此记忆对于我们的时间体验会产生重大的影响。</p>
+<p>我们可以想象一下，就如同上述我们会高估复杂事物的观察和学习所经历的的时间一样，对于更鲜明情境性、强烈情绪变化的、令人难忘的事件的记忆往往更难以磨灭，当我们回忆这些事件时往往会以“慢镜头”形式进行，自然会高估起经历的时间。</p>
+<p>这些难以忘怀的记忆事件往往是生命早期，尤其是生命中的第一次，比如初吻、第一次上学、拥有第一辆车等；而越是生命的后半程这类记忆深刻的事件必然越来越稀少，那么自然而然会感觉事件过得越来越快。</p>
+<ol>
+<li>以过去时间间期作为参照。</li>
+</ol>
+<p>人们衡量时间的另一个参照标尺是已经经历时间的长短，比如，年龄超过50岁的人常常自我戏谑自己是“土埋过大半截的人了”来说已经活过大半辈子。</p>
+<p>对于一个2岁的幼儿来说，1年就是他所经历生命总时间的一半，那么他对1年的体验自然是漫长的。到了10岁，1年意味着他所经历生命的10%，等到20岁变成5%，……</p>
+<p>如果有幸活到100岁，那么1年仅仅是生命经历的1%，1年时间的体验将比2岁的孩子快50倍，自然是飞速流逝。</p>
+<p>虽然，以上所述都还停留在理论阶段，仅有多巴胺对生物钟的调控获得部分证据支持。但是，这些理论至少为“随着年龄增大感觉时间过得越快”的困惑给出一些解释。</p>
+<p><a href="https://zhidao.baidu.com/daily/view?id=36709" target="_blank" rel="noopener">为什么年龄越大我们感觉时间过得越快？</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/为什么年龄越大我们感觉时间过得越快？/" data-id="cjabwqto90018hhyu89z0r2oj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Win7 Ubuntu双系统问题" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Win7 Ubuntu双系统问题/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.927Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="win7-ubuntu-双系统问题"><a href="#win7-ubuntu-双系统问题" class="headerlink" title="win7 ubuntu 双系统问题"></a>win7 ubuntu 双系统问题</h1><h2 id="安装Ubuntu时空闲的空间不可用"><a href="#安装Ubuntu时空闲的空间不可用" class="headerlink" title="安装Ubuntu时空闲的空间不可用"></a>安装Ubuntu时空闲的空间不可用</h2><p>win7 分区状态 (系统 + C + D + E ) 四个全是主分区，导致最后压缩卷生成的空闲磁盘不能被Ubuntu识别</p>
+<p>解决方案：</p>
+<p>将最后一个磁盘 删除卷，在创建卷，自动变成了扩展分区，（内部变为逻辑分区）， 然后在压缩卷<br>（之前的压缩卷颜色是黑色的，更改完后变成绿色）</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Win7 Ubuntu双系统问题/" data-id="cjabwqtni000lhhyuw0po93us" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Retrofit2 &amp; okhttp3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Retrofit2 & okhttp3/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.915Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Retrofit-2-X-amp-amp-okhttp-3-X"><a href="#Retrofit-2-X-amp-amp-okhttp-3-X" class="headerlink" title="Retrofit 2.X &amp;&amp; okhttp 3.X"></a>Retrofit 2.X &amp;&amp; okhttp 3.X</h1><h2 id="retrofit-2-x"><a href="#retrofit-2-x" class="headerlink" title="retrofit 2.x"></a>retrofit 2.x</h2><h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><p>这里我们就主要说一说最常用的@GET   @POST的用法</p>
+<p>假设URL为：<a href="http://ip.taobao.com/service/getIpInfo.php?ip=202.202.32.202" target="_blank" rel="noopener">http://ip.taobao.com/service/getIpInfo.php?ip=202.202.32.202</a></p>
+<ol>
+<li><p>定义接口</p>
+<pre><code>public interface MyService1 {
+    //？参数为？前面的到 /（斜杠）之间的值
+    @GET(&quot;getIpInfo.php&quot;)
+    //Get中的注解用@Query
+    Call&lt;IP&gt; getIP(@Query(&quot;ip&quot;) String ip);
+    /*********************************************************************************/
+    @FormUrlEncoded
+    @POST(&quot;getIpInfo.php&quot;)
+    //Post中的注解一定要用@Field不能用@Query
+    Call&lt;IP&gt; postIP(@Field(&quot;ip&quot;) String ip);
+}
+</code></pre><p> @GET对应的是@Query，@POST对应的是@Field</p>
+</li>
+</ol>
+<ul>
+<li><p>实例化retrofit</p>
+<pre><code>//实例化retrofit，配置好请求地址和解析方式
+Retrofit retrofit = new Retrofit.Builder()
+//★Retrofit2 的baseUlr 必须以 /（斜线） 结束，不然会抛出一个IllegalArgumentException
+.baseUrl(&quot;http://ip.taobao.com/service/&quot;)
+.addConverterFactory(GsonConverterFactory.create())//设置将json解析为javabean所用的方式
+.client(new OkHttpClient())
+.build();
+//通过retrofit创建第一步定义的接口的实例，
+//供在外部直接通过该实例调用该接口的getIP方法，完成网络请求
+MyService1 mservice =  retrofit.create(MyService1.class);
+
+//调用getIP（或者postIP）方法得到Call
+//          final Call&lt;IP&gt; call = taobaoIPService.getIP(&quot;202.202.32.202&quot;);
+ final Call&lt;IP&gt; call = mservice.postIP(&quot;202.202.32.202&quot;);
+</code></pre></li>
+</ul>
+<ol>
+<li><p>异步请求</p>
+<pre><code>//          call.enqueue开启异步网络请求
+call.enqueue(new Callback&lt;IP&gt;() {
+    @Override
+    //请求成功
+    public void onResponse(Response&lt;IP&gt; response, Retrofit retrofit) {
+        IP body = response.body();
+        String result = body.getData().getRegion();
+        Log.e(&quot;TAG&quot;,result);
+//                3.可以直接更改UI，因为onResponse方法已经在UI线程中
+                tv.setText(result);
+//                4.取消请求
+                call.cancel();
+            }
+            @Override
+            //请求失败
+            public void onFailure(Throwable throwable) {
+                Log.e(&quot;TAG&quot;,throwable.toString());
+                tv.setText(throwable.toString());
+                throwable.printStackTrace();
+            }
+        });
+</code></pre></li>
+</ol>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.open-open.com/lib/view/open1461505284381.html" target="_blank" rel="noopener">好用的网络请求库Retrofit2（入门及讲解）</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Retrofit2 & okhttp3/" data-id="cjabwqtng000khhyu7rk3tqi5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-retrofit 2.1.0 问题" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/retrofit 2.1.0 问题/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.911Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="retrofit-2-1-0-问题"><a href="#retrofit-2-1-0-问题" class="headerlink" title="retrofit 2.1.0 问题"></a>retrofit 2.1.0 问题</h1><h2 id="即使response存在问题onResponse依然被调用"><a href="#即使response存在问题onResponse依然被调用" class="headerlink" title="即使response存在问题onResponse依然被调用"></a>即使response存在问题onResponse依然被调用</h2><p>在Retrofit 1.9中，如果获取的 response 不能背解析成定义好的对象，则会调用failure。但是在Retrofit 2.0中，不管 response 是否能被解析。onResponse总是会被调用。但是在结果不能背解析的情况下，response.body()会返回null。别忘了处理这种情况。</p>
+<p>如果response存在什么问题，比如404什么的，onResponse也会被调用。你可以从response.errorBody().string()中获取错误信息的主体。</p>
+<p><strong>问题</strong></p>
+<p>retrofit 2.1.0 onResponse 只接受 200 ， 如 404 错误 还是在onFailure 中 以异常信息抛出， 不能做信息处理</p>
+<h2 id="data-数据格式问题"><a href="#data-数据格式问题" class="headerlink" title="data 数据格式问题"></a>data 数据格式问题</h2><pre><code>{  
+    data:&quot;你好&quot;,  
+    errorCode:200,  
+    moreInfo:&quot;错误详情&quot;  
+}
+</code></pre><p>如果 data 不是对象，而是 String 或 int 怎么解析</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/retrofit 2.1.0 问题/" data-id="cjabwqto70017hhyue8bulk2v" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-RecyclerView中的item的match_parent属性失效问题解决方案" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/RecyclerView中的item的match_parent属性失效问题解决方案/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.903Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="RecyclerView中的item的match-parent属性失效问题解决方案-以及-LayoutInflater"><a href="#RecyclerView中的item的match-parent属性失效问题解决方案-以及-LayoutInflater" class="headerlink" title="RecyclerView中的item的match_parent属性失效问题解决方案 以及 LayoutInflater"></a>RecyclerView中的item的match_parent属性失效问题解决方案 以及 LayoutInflater</h1><h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>item使用RelativeLayout布局，并且布局中的view至少有一个layout_alignParentRight=true</p>
+<p>在adapte中的onCreateViewHolder，使用</p>
+<pre><code>public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {  
+       //View view = View.inflate(parent.getContext(), R.layout.item_fra_main2, null);  
+     View view = mInflater.from(mContext).inflate(R.layout.item_fra_main2, parent, false);  
+     ViewHolder holder = new ViewHolder(view);  
+     return holder;  
+ } 
+</code></pre><p>分析</p>
+<pre><code>View.inflate(parent.getContext(), R.layout.item_fra_main2, parent);  
+  对应的是：LayoutInflate.inflate(resource , parent, true);//在RecycleView下奔溃  
+</code></pre><p>崩溃信息</p>
+<blockquote>
+<p>The specified child already has a parent. You must call removeView() on the child’s parent first</p>
+</blockquote>
+<p>修改为</p>
+<pre><code>View.inflate(parent.getContext(), R.layout.item_fra_main2, null);  
+  对应的是：LayoutInflate.inflate(resource , null, false);//match_parent属性失效  
+</code></pre><p>再次修改</p>
+<pre><code>LayoutInflater.from(context).inflate(R.layout.item_fra_main2, parent, false);      
+对应的是：LayoutInflate.inflate(resource , parent, false);//就需要这种方案  
+</code></pre><h2 id="LayoutInflater"><a href="#LayoutInflater" class="headerlink" title="LayoutInflater"></a>LayoutInflater</h2><p>LayoutInflater 主要是用于加载布局的</p>
+<p>用法一</p>
+<pre><code>LayoutInflater layoutInflater = LayoutInflater.from(context);  
+</code></pre><p>用法二</p>
+<pre><code>LayoutInflater layoutInflater = (LayoutInflater) context  
+    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
+</code></pre><p>其实第一种就是第二种的简单写法，只是Android给我们做了一下封装而已。得到了LayoutInflater的实例之后就可以调用它的inflate()方法来加载布局了，如下所示：</p>
+<pre><code>layoutInflater.inflate(resourceId, root);  
+</code></pre><p>inflate()方法一般接收两个参数，第一个参数就是要加载的布局id，第二个参数是指给该布局的外部再嵌套一层父布局，如果不需要就直接传null。这样就成功成功创建了一个布局的实例，之后再将它添加到指定的位置就可以显示出来了。</p>
+<pre><code>inflate(int resource, ViewGroup root, boolean attachToRoot)  
+</code></pre><ol>
+<li>如果root为null，attachToRoot将失去作用，设置任何值都没有意义。</li>
+<li>如果root不为null，attachToRoot设为true，则会给加载的布局文件的指定一个父布局，即root。</li>
+<li>如果root不为null，attachToRoot设为false，则会将布局文件最外层的所有layout属性进行设置，当该view被添加到父view当中时，这些layout属性会自动生效。</li>
+<li>在不设置attachToRoot参数的情况下，如果root不为null，attachToRoot参数默认为true。</li>
+</ol>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/overseasandroid/article/details/51840819" target="_blank" rel="noopener"> RecyclerView中的item的match_parent属性失效问题解决方案</a></p>
+<p><a href="http://blog.csdn.net/guolin_blog/article/details/12921889" target="_blank" rel="noopener">Android LayoutInflater原理分析，带你一步步深入了解View(一)</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/RecyclerView中的item的match_parent属性失效问题解决方案/" data-id="cjabwqtne000jhhyuq5ez728w" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-RadioGroup调用check(id)方法时，onCheckedChanged方法被执行多次解决办法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/RadioGroup调用check(id)方法时，onCheckedChanged方法被执行多次解决办法/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.895Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="RadioGroup调用check-id-方法时，onCheckedChanged方法被执行多次解决办法"><a href="#RadioGroup调用check-id-方法时，onCheckedChanged方法被执行多次解决办法" class="headerlink" title="RadioGroup调用check(id)方法时，onCheckedChanged方法被执行多次解决办法"></a>RadioGroup调用check(id)方法时，onCheckedChanged方法被执行多次解决办法</h1><ol>
+<li>不在RadioGroup设置onCheckedChangedListener，而是给每个RadioButton设置OnClickListener</li>
+<li>给要开始显示的 radioButton 设置 setChecked(true)</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/RadioGroup调用check(id)方法时，onCheckedChanged方法被执行多次解决办法/" data-id="cjabwqtnd000ihhyuc99yroe4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Python 安装模块" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Python 安装模块/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.895Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Python-安装模块"><a href="#Python-安装模块" class="headerlink" title="Python 安装模块"></a>Python 安装模块</h1><hr>
+<p>pip install 一般也不用考虑某些库用C语言写的，需要编译的问题：</p>
+<p>1 首先，安装python时，一定勾选pip install选项；</p>
+<p>2 <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/zpcorkgj/opencv_python-3.1.0-cp35-cp35m-win_amd64.whl" target="_blank" rel="noopener">http://www.lfd.uci.edu/~gohlke/pythonlibs/zpcorkgj/opencv_python-3.1.0-cp35-cp35m-win_amd64.whl</a>   上该网站找到需要的库：（下面以安装opencv为例）</p>
+<p>如图，放在了F盘，！！！！！！！！！！注意不要重命名，不然下一步会出错的！！！！！！！！！！</p>
+<p>4 amd      pip install wheel       pip install wheel      如果首次用，会安装pip。再次用时就会出现上图内容：Requirment already satisfied……..</p>
+<p>5    来了<br>首先转到whl文件所在位置》    </p>
+<p> pip install blablabla.whl(!!!!重要事情再说一遍，不要改文件名，不然会出错，我也母鸡为毛啊！！！)》     Succcessfully installed opencv-python-3.1.0———————-大功告成啊</p>
+<p>6   不放心，再确认一下是否安装成功</p>
+<p>进入python进入pythonhelp (‘modules’)会得到已安装的全部模块，1就ok了</p>
+<hr>
+<p>我也是 win7 64 bit 环境，简单说一下省去你自己查找的麻烦（经验）。（为避免歧义下文某些句子结尾木标点。）</p>
+<p>安装包：首先，安装 python 时记得选同时安装 pip 以及添加 path。如果这项漏选了可以再次安装选择 change…</p>
+<p>–&gt; 然后所有 modules 都可以用 pip 来安装，在 cmd 下直接 pip install whatevermodule</p>
+<p>–&gt; 无网络或无法链接网络时可以手动下载 module 到某 path 下，然后 pip install path\whatevermodule</p>
+<p>查看已安装的包：cmd 下 pip freeze</p>
+<h2 id="使用-urllib"><a href="#使用-urllib" class="headerlink" title="使用 urllib"></a>使用 urllib</h2><p>安装 python 3.6</p>
+<p><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="noopener">urllib 网址</a></p>
+<p>本身 python 带了 urllib 和 urllib2 的合集</p>
+<p>import urllib </p>
+<p>错误：name ‘urllib’ is not defined</p>
+<p>正确导入： from urllib import request</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="https://www.zhihu.com/question/21695470" target="_blank" rel="noopener">Python模块如何安装 并确认模块已经安装好</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Python 安装模块/" data-id="cjabwqtnc000hhhyum8bfiseu" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Photoshop 快捷键" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Photoshop 快捷键/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.883Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Photoshop-快捷键"><a href="#Photoshop-快捷键" class="headerlink" title="Photoshop 快捷键"></a>Photoshop 快捷键</h1><h2 id="放大-缩小-移动图像"><a href="#放大-缩小-移动图像" class="headerlink" title="放大 缩小 移动图像"></a>放大 缩小 移动图像</h2><ol>
+<li>放大镜工具、抓手工具 （侧边工具栏）</li>
+<li>ctrl + 空格键 鼠标状态变为放大镜状态（按键不松手，鼠标点击）</li>
+<li>按 空格键 不松手 鼠标状态变为抓手工具</li>
+<li>alt + 空格键 鼠标状态变为放大镜缩小状态（按键不松手）</li>
+<li>ctrl + “+” 也可实现</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Photoshop 快捷键/" data-id="cjabwqtna000ghhyukwx86hwc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/">__('next') &raquo;</a>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

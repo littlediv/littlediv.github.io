@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Android Studio 文件存储可能遇到的问题android系统自身自带有存储，另外也可以通过sd卡来扩充存储空间。前者好比pc中的硬盘，后者好移动硬盘。 前者空间较小，后者空间大，但后者不一定可用。 开发应用，处理本地数据存取时，可能会遇到这些问题：  需要判断sd卡是否可用: 占用过多机身内部存储，容易招致用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/Android studio 存储/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Android Studio 文件存储可能遇到的问题android系统自身自带有存储，另外也可以通过sd卡来扩充存储空间。前者好比pc中的硬盘，后者好移动硬盘。 前者空间较小，后者空间大，但后者不一定可用。 开发应用，处理本地数据存取时，可能会遇到这些问题：  需要判断sd卡是否可用: 占用过多机身内部存储，容易招致用户反感，优先将数据存放于sd卡;   应用数据存放路径，同其他应用应该保持一致，">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.715Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="Android Studio 文件存储可能遇到的问题android系统自身自带有存储，另外也可以通过sd卡来扩充存储空间。前者好比pc中的硬盘，后者好移动硬盘。 前者空间较小，后者空间大，但后者不一定可用。 开发应用，处理本地数据存取时，可能会遇到这些问题：  需要判断sd卡是否可用: 占用过多机身内部存储，容易招致用户反感，优先将数据存放于sd卡;   应用数据存放路径，同其他应用应该保持一致，">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Android studio 存储" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android studio 存储/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.715Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-Studio-文件存储"><a href="#Android-Studio-文件存储" class="headerlink" title="Android Studio 文件存储"></a>Android Studio 文件存储</h1><h2 id="可能遇到的问题"><a href="#可能遇到的问题" class="headerlink" title="可能遇到的问题"></a>可能遇到的问题</h2><p>android系统自身自带有存储，另外也可以通过sd卡来扩充存储空间。前者好比pc中的硬盘，后者好移动硬盘。 前者空间较小，后者空间大，但后者不一定可用。 开发应用，处理本地数据存取时，可能会遇到这些问题：</p>
+<ol>
+<li>需要判断sd卡是否可用: 占用过多机身内部存储，容易招致用户反感，优先将数据存放于sd卡;</li>
+</ol>
+<ul>
+<li>应用数据存放路径，同其他应用应该保持一致，应用卸载时，清除数据:<ul>
+<li>标新立异在sd卡根目录建一个目录，招致用户反感</li>
+<li>用户卸载应用后，残留目录或者数据在用户机器上，招致用户反感</li>
+</ul>
+</li>
+<li><p>需要判断两者的可用空间: sd卡存在时，可用空间反而小于机身内部存储，这时应该选用机身存储;</p>
+</li>
+<li><p>数据安全性，本应用数据不愿意被其他应用读写;</p>
+</li>
+<li>图片缓存等，不应该被扫描加入到用户相册等媒体库中去。</li>
+</ul>
+<h2 id="路径规律"><a href="#路径规律" class="headerlink" title="路径规律"></a>路径规律</h2><p>一般地，通过 Context  和  Environment 相关的方法获取文件存取的路径。</p>
+<p>通过这两个类可获取各种路径，如图：</p>
+<pre><code>    ($rootDir)
++- /data                -&gt; Environment.getDataDirectory()
+|   |
+|   |   ($appDataDir)
+|   +- data/com.srain.cube.sample
+|       |
+|       |   ($filesDir)
+|       +- files            -&gt; Context.getFilesDir() / Context.getFileStreamPath(&quot;&quot;)
+|       |       |
+|       |       +- file1    -&gt; Context.getFileStreamPath(&quot;file1&quot;)
+|       |   ($cacheDir)
+|       +- cache            -&gt; Context.getCacheDir()
+|       |
+|       +- app_$name        -&gt;(Context.getDir(String name, int mode)
+|
+|   ($rootDir)
++- /storage/sdcard0     -&gt; Environment.getExternalStorageDirectory()
+|                       / Environment.getExternalStoragePublicDirectory(&quot;&quot;)
+|
++- dir1             -&gt; Environment.getExternalStoragePublicDirectory(&quot;dir1&quot;)
+|
+|   ($appDataDir)
++- Andorid/data/com.srain.cube.sample
+    |
+    |   ($filesDir)
+    +- files        -&gt; Context.getExternalFilesDir(&quot;&quot;)
+    |   |
+    |   +- file1    -&gt; Context.getExternalFilesDir(&quot;file1&quot;)
+    |   +- Music    -&gt; Context.getExternalFilesDir(Environment.Music);
+    |   +- Picture  -&gt; ... Environment.Picture
+    |   +- ...
+    |
+    |   ($cacheDir)
+    +- cache        -&gt; Context.getExternalCacheDir()
+    |
+    +- ???
+</code></pre><h2 id="判断-SD-卡可用"><a href="#判断-SD-卡可用" class="headerlink" title="判断 SD 卡可用"></a>判断 SD 卡可用</h2><pre><code>/**
+ * Check if the primary &quot;external&quot; storage device is available.
+ * 
+ * 
+ * @return
+ */
+public static boolean hasSDCardMounted() {
+
+String state = Environment.getExternalStorageState();
+if (state != null &amp;&amp; state.equals(Environment.MEDIA_MOUNTED)) {
+    return true;
+} else {
+    return false;
+}
+}
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.tuicool.com/articles/AvUnqiy" target="_blank" rel="noopener">Android文件存储使用参考 - liaohuqiu</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android studio 存储/" data-id="cjabwqtm00006hhyubob48joo" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/android XML 符号含义 @/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/android studio依赖包/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

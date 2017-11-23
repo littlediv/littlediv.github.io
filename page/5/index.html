@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/page/5/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-Android中minSdkVersion和targetSdkVersion区分" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android中minSdkVersion和targetSdkVersion区分/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.731Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-minSdkVersion-targetSdkVersion-区分"><a href="#Android-minSdkVersion-targetSdkVersion-区分" class="headerlink" title="Android minSdkVersion, targetSdkVersion 区分"></a>Android minSdkVersion, targetSdkVersion 区分</h1><h2 id="API-level"><a href="#API-level" class="headerlink" title="API level"></a>API level</h2><p>Android的manifest文件中提供了<uses-sdk>标签.标签<uses-sdk>中指定的并不是我们使用的sdk的版本，也不是Android系统的版本，而是我们使用的Android平台的版本，即API level。API level是一个整数，它指的是我们使用的框架（Framework）的版本，也就是我们使用的sdk中的各个平台下的android.jar。但是这个API level又和Android系统的版本有着对应关系，并且每个系统都会在内部记录它所使用的API level。举例来说，我使用的手机系统是Android 2.3.3， 那么它就会在内部记录使用的API level为10。这个内部的API level可以让系统判定能不能安装一款app，这个问题会在下文中提及。</uses-sdk></uses-sdk></p>
+<p>android的系统版本和API level之间并不是一一对应的，比如Android 2.3， Android 2.3.1， Android 2.3.2对应API level 9， 而Android 2.3.3， Android 2.3.4对应API level 10。API level是Android向开发者提供的一套Framework（android.jar）的代号，可能发布了新的系统版本，但是这一套接口并没有变化，所以就不必提供新的Framework开发包，所以API level也不必改变。由此可知Android系统版本和API level是多对一的关系。由于API level就是发布的android.jar（一套接口）的代号，所以API level和sdk中platforms目录中的各个android.jar是一一对应的。说白了，Android系统版本是给Android用户看的，而API level是给应用程序开发者看的。</p>
+<h2 id="build-target"><a href="#build-target" class="headerlink" title="build target"></a>build target</h2><p>build target并不存在于manifest文件中，而是存在于项目根目录中的project.properties文件中。如果使用Eclipse构建项目的话，那么每个项目的根目录下都会有一个project.properties文件，这个文件中的内容用于告诉构建系统，怎样构建这个项目。打开这个文件，除了注释之外，还有以下一行：<br>target=android-18</p>
+<p>这句话就是指明build target，也就是根据哪个android平台构架这个项目。指明build target为android-18，就是使用sdk中platforms目录下android-18目录中的android.jar这个jar包编译项目。同样，这个android.jar会被加入到本项目的build path中。</p>
+<h2 id="android-minSdkVersion"><a href="#android-minSdkVersion" class="headerlink" title="android:minSdkVersion"></a>android:minSdkVersion</h2><p>指明应用程序运行所需的最小API level。如果不指明的话，默认是1。也就是说该应用兼容所有的android版本。我们应该总是声明这个属性。</p>
+<p><strong>如果系统的API level低于android:minSdkVersion设定的值，那么android系统会阻止用户安装这个应用。</strong></p>
+<p><strong>如果指明了这个属性，并且在项目中使用了高于这个API level的API， 那么会在编译时报错。</strong>将build target设为最新的android-19，那么就会使用最新的android-19下的android.jar来编译项目。将minSdkVersion设置为8。在使用的android.jar中，肯定会有和ActionBar相关的API， 但是在项目中调用ActionBar API， 项目会报错。因为minSdkVersion指明的API level 8中不存在ActionBar相关的API。</p>
+<p>调用Activity.getActionBar()和ActionBar.getHeight()方法需要API level 11， 但是指定的minSdkVersion为8，所以报错。<strong>由此可见，minSdkVersion不仅在程序安装时起作用，也会在项目构建时起作用。</strong></p>
+<p>如果没有设置minSdkVersion这个属性，那么默认是1。表明程序兼容所有的Android系统，能够在所有Android系统上运行。如果使用了高于API level 1 的API， 如ActionBar。那么在构建项目时，会提示和上面相同的错误，项目构建失败。</p>
+<h2 id="android-targetSdkVersion"><a href="#android-targetSdkVersion" class="headerlink" title="android:targetSdkVersion"></a>android:targetSdkVersion</h2><p>标明应用程序目标API Level的一个整数。如果不设置，默认值和minSdkVersion相同。</p>
+<p>这个属性通知系统，你已经针对这个指定的目标版本测试过你的程序，系统不必再使用兼容模式来让你的应用程序向前兼容这个目标版本。应用程序仍然能在低于targetSdkVersion的系统上运行。</p>
+<p>由于Android不断向着更新的版本进化，一些行为甚至是外观可能会改变。<strong>然而，如果平台的API Level高于你的应用程序中的targetSdkVersion属性指定的值，系统会开启兼容行为来确保你的应用程序继续以期望的形式来运行。</strong>你可以通过指定targetSdkVersion来匹配运行程序的平台的 API level来禁用这种兼容性行为。举例来说，设置这个值为11或更高，当你的应用运行在Android3.0或更高的系统上时，系统会为你的应用使用新的默认主题（Holo主题），并且当运行在大屏幕的设备上时会禁用屏幕兼容模式（screen compatibility mode），因为支持了 API level 11就暗示了支持大屏幕。</p>
+<p>根据你设置的targetSdkVersion 的值，系统会执行很多兼容行为。一些行为在对应平台版本的Build.VERSION_CODES中有讨论。</p>
+<p>为了让你的应用程序支持每个Android版本，你应当提高targetSdkVersion的值到最新的API level，然后在对应的平台上彻底的测试你的应用。</p>
+<p>从上面的论述可知，<strong>targetSdkVersion这个属性是在程序运行时期起作用的，系统根据这个属性决定要不要以兼容模式运行这个程序。</strong></p>
+<p>一般情况下，应该将这个属性的值设置为最新的API level 值，这样的话可以利用新版本系统上的新特性。eclipse在生成项目时，默认将该值设置为最高，如果设置一个较低的值，会给出一个警告，如下图所示。</p>
+<p>这个警告的意思是没有将targetSdkVersion的值设置为最高值，较新的系统会以兼容模式运行该程序。请考虑在新版本系统上测试程序并将targetSdkVersion设置为最新。更详细的信息请参考android.os.Build.VERSION_CODES 。</p>
+<h2 id="android-maxSdkVersion"><a href="#android-maxSdkVersion" class="headerlink" title="android:maxSdkVersion"></a>android:maxSdkVersion</h2><p>标明可以运行你的应用的最高API Level版本。</p>
+<p>在Android1.5， 1.6， 2.0 和2.0.1，在安装应用或系统升级时，系统会检查这个值。在这两种情况下，如果应用设置的maxSdkVersion 值低于系统本身使用的API Level，系统将不会允许安装该应用。在系统升级后，新系统会重新校验这个值，如果新系统的API Level高于这个值，新系统会删除你的应用。</p>
+<p>在高于2.0.1的系统上，安装应用时不会再检验应用中设置的maxSdkVersion值，在系统升级后也不会重新校验这个值。但是在向用户展示可用的应用时，Google Play会继续使用这个属性进行过滤。</p>
+<p>maxSdkVersion这个属性本来是在程序安装时和系统升级后起作用的。但是根据官方文档中的说明， 已经不再推荐使用这个属性。</p>
+<p>经过测试，将maxSdkVersion的值设置成9，程序是可以安装在4.2的手机上的。说明这个值已经不再起作用。</p>
+<h2 id="英文"><a href="#英文" class="headerlink" title="英文"></a>英文</h2><p>android:minSdkVersion<br>An integer designating the minimum API Level required for the application to run. The Android system will prevent the user from installing the application if the system’s API Level is lower than the value specified in this attribute. You should always declare this attribute.</p>
+<p>android:targetSdkVersion<br>An integer designating the API Level that the application is targetting.</p>
+<p>With this attribute set, the application says that it is able to run on older versions (down to minSdkVersion), but was explicitly tested to work with the version specified here. Specifying this target version allows the platform to disable compatibility settings that are not required for the target version (which may otherwise be turned on in order to maintain forward-compatibility) or enable newer features that are not available to older applications. This does not mean that you can program different features for different versions of the platform—it simply informs the platform that you have tested against the target version and the platform should not perform any extra work to maintain forward-compatibility with the target version.</p>
+<p>For more information refer this URL:</p>
+<p><a href="http://developer.android.com/guide/topics/manifest/uses-sdk-element.html" target="_blank" rel="noopener">http://developer.android.com/guide/topics/manifest/uses-sdk-element.html</a></p>
+<p>参考信息 <a href="http://blog.csdn.net/zhangjg_blog/article/details/17142395" target="_blank" rel="noopener">Android中build target，minSdkVersion，targetSdkVersion，maxSdkVersion概念区分</a></p>
+<p><a href="http://blog.csdn.net/edisonlg/article/details/7855898" target="_blank" rel="noopener">Android的minSdkVersion，targetSdkVersion，maxSdkVersion</a></p>
+<p><a href="http://stackoverflow.com/questions/4568267/android-min-sdk-version-vs-target-sdk-version" target="_blank" rel="noopener">Android Min SDK Version vs. Target SDK Version</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android中minSdkVersion和targetSdkVersion区分/" data-id="cjabwqtm80009hhyuoue8he47" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android XML 符号含义 @" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android XML 符号含义 @/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.727Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="android-XML-符号含义"><a href="#android-XML-符号含义" class="headerlink" title="android XML 符号含义 @"></a>android XML 符号含义 @</h1><p>在android开发中，资源文件里总是会出现”@string/hello” 、“@android:color/darker_gray”、”@+id/title”、”?android:attr/textAppearanceSmall”，那么这些究竟有什么不同呢？其实这些都是对资源的引用。</p>
+<h2 id="string-hello-引用自定义资源"><a href="#string-hello-引用自定义资源" class="headerlink" title="@string/hello 引用自定义资源"></a>@string/hello 引用自定义资源</h2><p>这个的语法是：@[<package_name>:]<resource_type>/<resource_name>，其中包名是可选的，代表资源是你自己这个包中的</resource_name></resource_type></package_name></p>
+<h2 id="android-color-darker-gray-引用系统资源"><a href="#android-color-darker-gray-引用系统资源" class="headerlink" title="@android:color/darker_gray 引用系统资源"></a>@android:color/darker_gray 引用系统资源</h2><p>与上一个相比，它多了”android：“，语法是相同的，它代表引用的是系统资源。</p>
+<p>注意：其实@android:type/name是@[package:]type/name 的一个子类</p>
+<h2 id="代表引用系统的非public资源。格式：-android-type-name"><a href="#代表引用系统的非public资源。格式：-android-type-name" class="headerlink" title="@代表引用系统的非public资源。格式：@android:type/name"></a>@<em>代表引用系统的非public资源。格式：@</em>android:type/name</h2><p>  系统资源定义分public和非public。public的声明在：</p>
+<p>  <sdk_path>\platforms\android-8\data\res\values\public.xml</sdk_path></p>
+<p>  @*android:type/name：可以调用系统定义的所有资源</p>
+<p>  @android:type/name：只能够调用publi属性的资源。</p>
+<p>  注意：没在public.xml中声明的资源是google不推荐使用的。</p>
+<h2 id="id-title-代表在创建或引用资源"><a href="#id-title-代表在创建或引用资源" class="headerlink" title="@+id/title 代表在创建或引用资源"></a>@+id/title 代表在创建或引用资源</h2><p>多了个加号，代表引用或创建，若不存在，则创建，若存在，则引用</p>
+<p> 含义：”+”表示在R.Java中名为type的内部类中添加一条记录。如”@+id/button”的含义是在R.java 文件中的id 这个静态内部类添加一条常量名为button。该常量就是该资源的标识符。如果标示符（包括系统资源）已经存在则表示引用该标示符。最常用的就是在定义资源ID中，例如：</p>
+<p> @+id/资源ID名         新建一个资源ID</p>
+<p> @id/资源ID名          应用现有已定义的资源ID，包括系统ID</p>
+<p> @android:id/资源ID名   引用系统ID，其等效于@id/资源ID名</p>
+<p> android:id=”@+id/selectdlg”</p>
+<p> android:id=”@android:id/text1”</p>
+<p> android:id=”@id/button3”  </p>
+<h2 id="android-attr-textAppearanceSmall-代表引用主题属性"><a href="#android-attr-textAppearanceSmall-代表引用主题属性" class="headerlink" title="?android:attr/textAppearanceSmall 代表引用主题属性"></a>?android:attr/textAppearanceSmall 代表引用主题属性</h2><p>语法是?[<package_name>:][<resource_type>/]<resource_name>，代表引用的是主题中的样式属性资源。资源类型是可以省略的。可以这样写：?android:textAppearanceSmall</resource_name></resource_type></package_name></p>
+<p> 另外一种资源值允许你引用当前主题中的属性的值。这个属性值只能在style资源和XML属性中使用；它允许你通过将它们改变为当前主题提供的标准变化来改变UI元素的外观，而不是提供具体的值。例如：</p>
+<p>  android:textColor=”?android:textDisabledColor” </p>
+<p>   注意，这和资源引用非常类似，除了我们使用一个”?”前缀代替了”@”。当你使用这个标记时，你就提供了属性资源的名称，它将会在主题中被查找，所以你不需要显示声明这个类型(如果声明，其形式就是?android:attr/android:textDisabledColor)。除了使用这个资源的标识符来查询主题中的值代替原始的资源，其命名语法和”@”形式一致：?[namespace:]type/name，这里类型可选。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://www.jb51.net/softjc/382050.html" target="_blank" rel="noopener">Android XML文件中的@、？、@+的该怎么理解？</a><br><a href="http://blog.csdn.net/mingli198611/article/details/7105850/" target="_blank" rel="noopener">Android xml资源文件中@、@android:type、@*、？、@+含义和区别</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android XML 符号含义 @/" data-id="cjabwqtnk000nhhyu6z6paz73" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android studio 存储" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android studio 存储/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.715Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-Studio-文件存储"><a href="#Android-Studio-文件存储" class="headerlink" title="Android Studio 文件存储"></a>Android Studio 文件存储</h1><h2 id="可能遇到的问题"><a href="#可能遇到的问题" class="headerlink" title="可能遇到的问题"></a>可能遇到的问题</h2><p>android系统自身自带有存储，另外也可以通过sd卡来扩充存储空间。前者好比pc中的硬盘，后者好移动硬盘。 前者空间较小，后者空间大，但后者不一定可用。 开发应用，处理本地数据存取时，可能会遇到这些问题：</p>
+<ol>
+<li>需要判断sd卡是否可用: 占用过多机身内部存储，容易招致用户反感，优先将数据存放于sd卡;</li>
+</ol>
+<ul>
+<li>应用数据存放路径，同其他应用应该保持一致，应用卸载时，清除数据:<ul>
+<li>标新立异在sd卡根目录建一个目录，招致用户反感</li>
+<li>用户卸载应用后，残留目录或者数据在用户机器上，招致用户反感</li>
+</ul>
+</li>
+<li><p>需要判断两者的可用空间: sd卡存在时，可用空间反而小于机身内部存储，这时应该选用机身存储;</p>
+</li>
+<li><p>数据安全性，本应用数据不愿意被其他应用读写;</p>
+</li>
+<li>图片缓存等，不应该被扫描加入到用户相册等媒体库中去。</li>
+</ul>
+<h2 id="路径规律"><a href="#路径规律" class="headerlink" title="路径规律"></a>路径规律</h2><p>一般地，通过 Context  和  Environment 相关的方法获取文件存取的路径。</p>
+<p>通过这两个类可获取各种路径，如图：</p>
+<pre><code>    ($rootDir)
++- /data                -&gt; Environment.getDataDirectory()
+|   |
+|   |   ($appDataDir)
+|   +- data/com.srain.cube.sample
+|       |
+|       |   ($filesDir)
+|       +- files            -&gt; Context.getFilesDir() / Context.getFileStreamPath(&quot;&quot;)
+|       |       |
+|       |       +- file1    -&gt; Context.getFileStreamPath(&quot;file1&quot;)
+|       |   ($cacheDir)
+|       +- cache            -&gt; Context.getCacheDir()
+|       |
+|       +- app_$name        -&gt;(Context.getDir(String name, int mode)
+|
+|   ($rootDir)
++- /storage/sdcard0     -&gt; Environment.getExternalStorageDirectory()
+|                       / Environment.getExternalStoragePublicDirectory(&quot;&quot;)
+|
++- dir1             -&gt; Environment.getExternalStoragePublicDirectory(&quot;dir1&quot;)
+|
+|   ($appDataDir)
++- Andorid/data/com.srain.cube.sample
+    |
+    |   ($filesDir)
+    +- files        -&gt; Context.getExternalFilesDir(&quot;&quot;)
+    |   |
+    |   +- file1    -&gt; Context.getExternalFilesDir(&quot;file1&quot;)
+    |   +- Music    -&gt; Context.getExternalFilesDir(Environment.Music);
+    |   +- Picture  -&gt; ... Environment.Picture
+    |   +- ...
+    |
+    |   ($cacheDir)
+    +- cache        -&gt; Context.getExternalCacheDir()
+    |
+    +- ???
+</code></pre><h2 id="判断-SD-卡可用"><a href="#判断-SD-卡可用" class="headerlink" title="判断 SD 卡可用"></a>判断 SD 卡可用</h2><pre><code>/**
+ * Check if the primary &quot;external&quot; storage device is available.
+ * 
+ * 
+ * @return
+ */
+public static boolean hasSDCardMounted() {
+
+String state = Environment.getExternalStorageState();
+if (state != null &amp;&amp; state.equals(Environment.MEDIA_MOUNTED)) {
+    return true;
+} else {
+    return false;
+}
+}
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.tuicool.com/articles/AvUnqiy" target="_blank" rel="noopener">Android文件存储使用参考 - liaohuqiu</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android studio 存储/" data-id="cjabwqtm00006hhyubob48joo" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android studio依赖包" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android studio依赖包/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.703Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-Stuido-依赖包"><a href="#Android-Stuido-依赖包" class="headerlink" title="Android Stuido 依赖包"></a>Android Stuido 依赖包</h1><h2 id="网络不好，使用本地包"><a href="#网络不好，使用本地包" class="headerlink" title="网络不好，使用本地包"></a>网络不好，使用本地包</h2><h3 id="在AndroidStudio中如何显示出依赖库的本地存储路径"><a href="#在AndroidStudio中如何显示出依赖库的本地存储路径" class="headerlink" title="在AndroidStudio中如何显示出依赖库的本地存储路径"></a>在AndroidStudio中如何显示出依赖库的本地存储路径</h3><pre><code>task showMeCache &lt;&lt; {
+configurations.compile.each { println it }
+}
+</code></pre><p>将代码放在 Module 的 build.gradle 最下方<br>然后在控制台执行</p>
+<pre><code>gradle showMeCache
+</code></pre><p>即可看到所有依赖对应的路径</p>
+<pre><code>:app:showMeCache
+/Users/mao/workpace/person/AppPlus/app/libs/lite-orm-1.7.0.jar
+/Users/mao/workpace/person/AppPlus/app/libs/umeng-update-v2.6.0.1.jar
+/Users/mao/Downloads/android/sdk/extras/android/m2repository/com/android/support/appcompat-v7/23.1.1/appcompat-v7-23.1.1.aar
+/Users/mao/Downloads/android/sdk/extras/android/m2repository/com/android/support/design/23.1.1/design-23.1.1.aar
+/Users/mao/.gradle/caches/modules-2/files-2.1/com.jenzz/materialpreference/1.3/def38f1784f5f789b10ed388e385f7857e765405/materialpreference-1.3.aar
+</code></pre><p>参考信息： <a href="http://blog.csdn.net/asd6340370/article/details/51829847" target="_blank" rel="noopener">在AndroidStudio中如何显示出依赖库的本地存储路径</a></p>
+<p>依赖路径（约在如下目录 androidSDK 和用户 .gradle</p>
+<ol>
+<li>D:\Android\Sdk\extras\android\m2repository\com\android\support</li>
+<li>C:\Users\mac.gradle\caches\modules-2\files-2.1</li>
+</ol>
+<p>（在AndroidStudio中的”External Libraries”下有引用的library的列表, 选择某个library右键-&gt;”Library Properties …”就可以看到你引用的库本地的存放路径）</p>
+<h3 id="添加本地-arr-文件依赖"><a href="#添加本地-arr-文件依赖" class="headerlink" title="添加本地 arr 文件依赖"></a>添加本地 arr 文件依赖</h3><ol>
+<li>在Module中建立”libs”目录(如果没有的话)</li>
+<li>把aar文件拷入libs目录(假设为abc.aar) </li>
+<li><p>在Module的build.gradle中加入：<br> repositories {</p>
+<p> flatDir {</p>
+<p> dirs ‘libs’</p>
+<p> }</p>
+<p> }    </p>
+</li>
+<li><p>在Module的build.gradle中的dependencies中加入：</p>
+<p> compile(name:’abc’,ext:’aar’)</p>
+</li>
+</ol>
+<p>参考信息： <a href="http://www.jianshu.com/p/799887025ff7" target="_blank" rel="noopener">Android Studio如何加本地aar文件依赖</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android studio依赖包/" data-id="cjabwqtnr000thhyuok5k5gxn" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android studio wrapper 设置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android studio wrapper 设置/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.695Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="android-studio-wrapper-设置"><a href="#android-studio-wrapper-设置" class="headerlink" title="android studio wrapper 设置"></a>android studio wrapper 设置</h1><h2 id="wrapper-位置"><a href="#wrapper-位置" class="headerlink" title="wrapper 位置"></a>wrapper 位置</h2><ol>
+<li>默认路径</li>
+</ol>
+<pre><code>C:\Users\XXX\.gradle\wrapper\dists\gradle-2.8-all\ah86jmo43de9lfa8xg9ux3c4h
+</code></pre><ol>
+<li><p>本地路径</p>
+<p> D:\android-studio\gradle\gradle-2.10</p>
+</li>
+</ol>
+<h2 id="修改wrapper"><a href="#修改wrapper" class="headerlink" title="修改wrapper"></a>修改wrapper</h2><ol>
+<li><p>配置gradle时我们必须在{project.dir}\gradle\wrapper\gradle-wrapper.properties文件中配置gradle</p>
+<p> distributionUrl=<a href="https://services.gradle.org/distributions/gradle-2.8-all.zip" target="_blank" rel="noopener">https://services.gradle.org/distributions/gradle-2.8-all.zip</a></p>
+<p> 改成</p>
+<p> distributionUrl=<a href="https://services.gradle.org/distributions/gradle-2.10-all.zip" target="_blank" rel="noopener">https://services.gradle.org/distributions/gradle-2.10-all.zip</a></p>
+<p> 或使用本地文件</p>
+<p> distributionUrl=file\:/C:/Users/XXX/.gradle\wrapper/dists/gradle-2.8-all.zip<br> (不知道哪的问题不可行)</p>
+</li>
+<li><p>android studio 设置</p>
+<p> file -&gt; settings -&gt; build,execution,deployment -&gt; build tools -&gt; gradle</p>
+<p> project-level settings</p>
+<p> 点选 use local gradle sidtribution</p>
+<p> gradle home D:\android-studio\gradle\gradle-2.10</p>
+</li>
+</ol>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/cdwlx/article/details/51581663" target="_blank" rel="noopener">Android Studio遇到的那些坑及爬坑方法</a></p>
+<p><a href="http://blog.csdn.net/kasieryang/article/details/51842953" target="_blank" rel="noopener"> android studio 配置本地gradle</a></p>
+<p><a href="http://www.cnblogs.com/wxishang1991/p/5457878.html" target="_blank" rel="noopener">AndroidStudio gradle配置</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android studio wrapper 设置/" data-id="cjabwqtnq000shhyuiql9jrb6" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android studio Glide 缓存 时间" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android studio Glide 缓存 时间/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.683Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-studio-Glide-缓存-时间"><a href="#Android-studio-Glide-缓存-时间" class="headerlink" title="Android studio Glide 缓存 时间"></a>Android studio Glide 缓存 时间</h1><h2 id="清除Glide缓存"><a href="#清除Glide缓存" class="headerlink" title="清除Glide缓存"></a>清除Glide缓存</h2><p>Glide自带清除缓存的功能,分别对应Glide.get(context).clearDiskCache();(清除磁盘缓存)与Glide.get(context).clearMemory();(清除内存缓存)两个方法.其中clearDiskCache()方法必须运行在子线程,clearMemory()方法必须运行在主线程,这是这两个方法所强制要求的,详见源码.</p>
+<h2 id="更新本地-url-路径"><a href="#更新本地-url-路径" class="headerlink" title="更新本地 url 路径"></a>更新本地 url 路径</h2><p>对于有些图片框架，没有提供重新设置 url对应的缓存内容的api</p>
+<p>这个问题的解决方案是这样的：<br>xxx.com/image/1.png 和xxx.com/image/1.png ?1469247425923<br>这2个url 获取到的图片是一样的</p>
+<p>so，当你app里面更改了图片，而服务器里图片url是固定不变的， 你只需要在你 的url地址后面 加个 ?和一些字符串，如时间戳，那么用这个    新的url       替换你的旧的url，然后用 图片框架重新加载一遍。</p>
+<pre><code>if(头像上传成功了){
+    String newURL=BCUtil.reSetHeadImageURL(mySharedPreferences.getUserLoginHeadURL());
+    mySharedPreferences.saveUserLoginHeadURL(newURL); 
+    Glide.with(AccountDetailActivity.this).load( mySharedPreferences.getUserLoginHeadURL()).into(image_head) ;
+}
+
+public static String reSetHeadImageURL(String oldURL) {
+    String newURL;
+    int position = oldURL.indexOf(&quot;?&quot;);
+    if (position &gt; 0) {
+        newURL = oldURL.substring(0, position);
+        newURL = newURL + &quot;?&quot; + System.currentTimeMillis();
+    } else {
+        newURL = oldURL + &quot;?&quot; + System.currentTimeMillis();
+    }
+   return newURL;
+}
+</code></pre><h2 id="signature"><a href="#signature" class="headerlink" title="signature"></a>signature</h2><pre><code>Glide.with(yourFragment)
+.load(yourFileDataModel)
+.signature(new StringSignature(yourVersionMetadata))
+.into(yourImageView);
+</code></pre><h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.jianshu.com/p/468bd4621f6e" target="_blank" rel="noopener">Glide获取缓存大小并清除缓存图片</a></p>
+<p><a href="http://blog.csdn.net/wangtoo520/article/details/53164521" target="_blank" rel="noopener">glide等图片缓存框架替换缓存图片解决方案</a></p>
+<p><a href="https://github.com/bumptech/glide/wiki/Caching-and-Cache-Invalidation#cache-invalidation" target="_blank" rel="noopener">Caching and Cache Invalidation</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android studio Glide 缓存 时间/" data-id="cjabwqtlz0005hhyuuajccrzt" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android studio adb shell 命令" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android studio adb shell 命令/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.679Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="android-studio-adb-shell-命令"><a href="#android-studio-adb-shell-命令" class="headerlink" title="android studio adb shell 命令"></a>android studio adb shell 命令</h1><h2 id="获取手机分辨率"><a href="#获取手机分辨率" class="headerlink" title="获取手机分辨率"></a>获取手机分辨率</h2><p><strong>通用方法：</strong></p>
+<pre><code>&gt;adb shell dumpsys window displays |head -n 3
+</code></pre><p>输出类似如下信息：</p>
+<blockquote>
+<p>WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)</p>
+<p>Display: mDisplayId=0</p>
+<p>init=1080x1920 440dpi cur=1080x1920 app=1080x1920 </p>
+<p>rng=1080x1025-1920x1865</p>
+</blockquote>
+<p><strong>高通平台</strong></p>
+<blockquote>
+<p>adb shell wm size</p>
+</blockquote>
+<p>输出：</p>
+<blockquote>
+<p>Physical size: 1080x1920</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android studio adb shell 命令/" data-id="cjabwqtno000rhhyulymtrgyk" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android PopupWindow 相关信息" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android PopupWindow 相关信息/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.679Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-PopupWindow"><a href="#Android-PopupWindow" class="headerlink" title="Android PopupWindow"></a>Android PopupWindow</h1><h2 id="一般用法"><a href="#一般用法" class="headerlink" title="一般用法"></a>一般用法</h2><pre><code>View view = View.inflate(context, R.layout.layout_view, null);
+PopupWindow popupWindow = new PopupWindow(view, width, height, true);
+popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));
+popupWindow.setOutsideTouchable(true);
+popupWindow.setAnimationStyle(R.style.pop_animation_style);
+popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+</code></pre><h2 id="细节分析"><a href="#细节分析" class="headerlink" title="细节分析"></a>细节分析</h2><h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><pre><code>public PopupWindow(View contentView, int width, int height, boolean focusable)
+</code></pre><p>contentView为要显示的view，width和height为宽和高，值为像素值，也可以是MATCHT_PARENT和WRAP_CONTENT。<br>focusable为是否可以获得焦点，这是一个很重要的参数，也可以通过</p>
+<pre><code>public void setFocusable(boolean focusable)
+</code></pre><p>来设置，如果focusable为false，在一个Activity弹出一个PopupWindow，按返回键，由于PopupWindow没有焦点，会直接退出Activity。如果focusable为true，PopupWindow弹出后，所有的触屏和物理按键都有PopupWindows处理。</p>
+<p>如果PopupWindow中有Editor的话，focusable要为true。</p>
+<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><pre><code>&lt;style name=&quot;pop_animation_style&quot;&gt;
+    &lt;item name=&quot;android:windowEnterAnimation&quot;&gt;@anim/pop_center_in&lt;/item&gt;
+    &lt;item name=&quot;android:windowExitAnimation&quot;&gt;@anim/pop_center_out&lt;/item&gt;
+&lt;/style&gt;
+
+popupWindow.setAnimationStyle(R.style.pop_animation_style);
+</code></pre><h3 id="PopupWindow-显示问题"><a href="#PopupWindow-显示问题" class="headerlink" title="PopupWindow 显示问题"></a>PopupWindow 显示问题</h3><p>需要在新建时设置 PopupWindow 的宽高，否则不显示；如果还不显示， 可尝试在 xml 根布局中添加背景<br>(mPopupWindow.update(width, height);)</p>
+<h3 id="设置宽高"><a href="#设置宽高" class="headerlink" title="设置宽高"></a>设置宽高</h3><p>有两种方法设置PopupWindow的大小：</p>
+<p>调用有宽高参数的构造函数：</p>
+<pre><code>LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+View contentview = inflater.inflate(R.layout.popup_process, null);
+PopupWindow popupWindow = new PopupWindow(contentview,LayoutParams.WRAP_CONTENT,
+LayoutParams.WRAP_CONTENT);
+</code></pre><p>通过setWidth和setHeight设置</p>
+<pre><code>PopupWindow popupWindow = new PopupWindow(contentview);
+popupWindow.setWidth(LayoutParams.WRAP_CONTENT);           
+popupWindow.setHeight(LayoutParams.WRAP_CONTENT);
+</code></pre><p>两种办法是等效的，不管采用何种办法，必须设置宽和高，否则不显示任何东西.</p>
+<p>这里的WRAP_CONTENT可以换成fill_parent 也可以是具体的数值，它是指PopupWindow的大小，也就是contentview的大小，注意popupwindow根据这个大小显示你的View，如果你的View本身是从xml得到的，那么xml的第一层view的大小属性将被忽略。<strong>相当于popupWindow的width和height属性直接和第一层View相对应。</strong></p>
+<h3 id="点击外部区域可关闭-PopupWindow"><a href="#点击外部区域可关闭-PopupWindow" class="headerlink" title="点击外部区域可关闭 PopupWindow"></a>点击外部区域可关闭 PopupWindow</h3><p>需要手动设置 PopupWindow 背景 popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));<br>和 popupWindow.setOutsideTouchable(true);</p>
+<h3 id="PopupWindow-showAtLocation和showAsDropDown参数分析"><a href="#PopupWindow-showAtLocation和showAsDropDown参数分析" class="headerlink" title="PopupWindow showAtLocation和showAsDropDown参数分析"></a>PopupWindow showAtLocation和showAsDropDown参数分析</h3><p>showAtLocation 中传入的 view 对弹出框基本没有影响，屏幕原点是屏幕的左上角 </p>
+<p>PopupWindow 的这两个方法都是控制PopupWindow 出现的，具体分析如下：</p>
+<ol>
+<li><p>showAtLocation，例如：showAtLocation(findViewById(R.id.search_ib), Gravity.TOP | Gravity.RIGHT,10, 10);<br>第一个参数：这个view是要能获取到window唯一标示的（也就是只要能获取到window 标示，view是什么控件都可以），应该是标示这个pw添加到哪个window里面，对控制pw出现位置没有影响；<br>第二个参数：请记住屏幕原点是屏幕的左上角。Gravity.TOP | Gravity.RIGHT指的就是屏幕的右上角，那么pw的中心点坐标是（屏幕宽,0）。pw默认是在屏幕的中间，也就是Gravity.LEFT表示pw的中心点坐标是(0,1/2屏幕高)；<br>第三、四个参数：偏移量的方向与第二个参数有关。Gravity.TOP | Gravity.RIGHT，以屏幕右上角为原点，pw往X轴负方向偏移10个像素，往Y轴正方向偏移10个像素；如果是Gravity.BOTTOM| Gravity.LEFT，以屏幕左下角为原点，pw往X轴正方向偏移10个像素，往Y轴正方向偏移10个像素。<br>注意：这个偏移量可以是正的，也可以是负的。无论偏移多大，pw是不会跑出屏幕。具体往轴的那个方向偏移，跟第二个参数有关，对于Gravity.CENTER的情况，偏移量负表示往轴的负方向，正往轴的正方向</p>
+</li>
+<li><p>showAsDropDown，例如：showAsDropDown(MainActivity.this.findViewById(R.id.logo_iv),100,0)，<br>以R.id.logo_iv的左下角为原点，向X轴正方向偏移100个像素，Y轴方向偏移0个像素。<br>注意：这个偏移量可以是正的，也可以是负的。无论偏移多大，pw是不会跑出屏幕。</p>
+</li>
+</ol>
+<h2 id="PopupWindow怎么合理控制弹出位置（showAtLocation）"><a href="#PopupWindow怎么合理控制弹出位置（showAtLocation）" class="headerlink" title="PopupWindow怎么合理控制弹出位置（showAtLocation）"></a>PopupWindow怎么合理控制弹出位置（showAtLocation）</h2><pre><code>// 一个自定义的布局，作为显示的内容
+Context context = null;　　// 真实环境中要赋值
+int layoutId = 0;　　　　　　// 布局ID
+View contentView = LayoutInflater.from(context).inflate(layoutId, null);
+
+final PopupWindow popupWindow = new PopupWindow(contentView,
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+
+popupWindow.setTouchable(true);
+// 如果不设置PopupWindow的背景，有些版本就会出现一个问题：无论是点击外部区域还是Back键都无法dismiss弹框
+// 这里单独写一篇文章来分析
+popupWindow.setBackgroundDrawable(new ColorDrawable());
+// 设置好参数之后再show
+popupWindow.showAsDropDown(contentView);
+</code></pre><p>如果创建PopupWindow的时候没有指定高宽，那么showAsDropDown默认只会向下弹出显示，这种情况有个最明显的缺点就是：弹窗口可能被屏幕截断，显示不全，所以需要使用到另外一个方法showAtLocation,这个的坐标是相对于整个屏幕的，所以需要我们自己计算位置。</p>
+<p>如下图所示，我们可以根据屏幕左上角的坐标A，屏幕高宽，点击View的左上角的坐标C，点击View的大小以及PopupWindow布局的大小计算出PopupWindow的显示位置B</p>
+<p>计算方法源码如下：</p>
+<pre><code>/**
+     * 计算出来的位置，y方向就在anchorView的上面和下面对齐显示，x方向就是与屏幕右边对齐显示
+     * 如果anchorView的位置有变化，就可以适当自己额外加入偏移来修正
+     * @param anchorView  呼出window的view
+     * @param contentView   window的内容布局
+     * @return window显示的左上角的xOff,yOff坐标
+ */
+private static int[] calculatePopWindowPos(final View anchorView, final View contentView) {
+    final int windowPos[] = new int[2];
+    final int anchorLoc[] = new int[2];
+    // 获取锚点View在屏幕上的左上角坐标位置
+    anchorView.getLocationOnScreen(anchorLoc);
+    final int anchorHeight = anchorView.getHeight();
+    // 获取屏幕的高宽
+    final int screenHeight = ScreenUtils.getScreenHeight(anchorView.getContext());
+    final int screenWidth = ScreenUtils.getScreenWidth(anchorView.getContext());
+    contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+    // 计算contentView的高宽
+    final int windowHeight = contentView.getMeasuredHeight();
+    final int windowWidth = contentView.getMeasuredWidth();
+    // 判断需要向上弹出还是向下弹出显示
+    final boolean isNeedShowUp = (screenHeight - anchorLoc[1] - anchorHeight &lt; windowHeight);
+    if (isNeedShowUp) {
+        windowPos[0] = screenWidth - windowWidth;
+        windowPos[1] = anchorLoc[1] - windowHeight;
+    } else {
+        windowPos[0] = screenWidth - windowWidth;
+        windowPos[1] = anchorLoc[1] + anchorHeight;
+    }
+    return windowPos;
+}
+</code></pre><p>接下来调用showAtLoaction显示：</p>
+<pre><code>View windowContentViewRoot = 我们要设置给PopupWindow进行显示的View
+int windowPos[] = calculatePopWindowPos(view, windowContentViewRoot);
+int xOff = 20；// 可以自己调整偏移
+windowPos[0] -= xOff;
+popupwindow.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos[0], windowPos[1]);
+// windowContentViewRoot是根布局View
+</code></pre><p>上面的例子只是提供了一种计算方式，在实际开发中可以根据需求自己计算，比如anchorView在左边的情况，在中间的情况，可以根据实际需求写一个弹出位置能够自适应的PopupWindow。</p>
+<p>补充上获取屏幕高宽的代码ScreenUtils.java：</p>
+<pre><code>/**
+    * 获取屏幕高度(px)
+ */
+public static int getScreenHeight(Context context) {
+    return context.getResources().getDisplayMetrics().heightPixels;
+}
+/**
+    * 获取屏幕宽度(px)
+ */
+public static int getScreenWidth(Context context) {
+    return context.getResources().getDisplayMetrics().widthPixels;
+}
+</code></pre><h2 id="onCreate方法中调用PopupWindow的错误：android-view-WindowManager-BadTo"><a href="#onCreate方法中调用PopupWindow的错误：android-view-WindowManager-BadTo" class="headerlink" title="onCreate方法中调用PopupWindow的错误：android.view.WindowManager$BadTo"></a>onCreate方法中调用PopupWindow的错误：android.view.WindowManager$BadTo</h2><p>如题：在activity的oncreate方法中使用popupwindow出现以下错误：<br>Android.view.WindowManager$BadTokenException: Unable to add window –<br>token null is not valid; is your activity running?<br>错误代码如下 ：</p>
+<pre><code>pop= newPopupWindow(pop_view,320,250);
+pop.showAtLocation(parent, Gravity.TOP,0, 0);
+</code></pre><p>解决方法：<br>应把pop.showAtLocation(parent, Gravity.TOP,0, 0)这一句移出oncreate方法，在控件渲染完毕后再使用。<br>但是移出oncreate方法的话该移到哪里去呢？网友的方法大概是这几种：<br>1、移到事件中（比如一个button的click事件中）;</p>
+<p>2、移到子线程中;另起一线程,在线程中不断循环，直到判断控件是否渲染完毕(如长宽大于0),不推荐。。。</p>
+<p>3、移到重写的控件(parent)中,在控件ondraw()完后生成pop。</p>
+<p>ps：1、2绝对没问题，3没测试过。 </p>
+<p>后来在网上找到一个绝佳的方法：</p>
+<pre><code>@Override
+
+public void onWindowFocusChanged(boolean hasFocus) {
+
+     //
+     TODO Auto-generated method stub
+
+     super.onWindowFocusChanged(hasFocus);
+
+     if(hasFocus){
+
+      showPopupWindow(getApplicationContext());
+
+     }
+
+}
+</code></pre><p>其中showPopupWindow(getApplicationContext())是我自己定义的专门显示popupwindow的一个函数。<br>当activity获得焦点之后，activity是加载完毕的了，这个方法的技巧性比较强，很难想到。</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/ben0612/article/details/43191205" target="_blank" rel="noopener">PopupWindow showAtLocation和showAsDropDown参数分析</a></p>
+<p><a href="http://www.cnblogs.com/popfisher/p/5608436.html" target="_blank" rel="noopener">Android PopupWindow怎么合理控制弹出位置(showAtLocation)</a></p>
+<p><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2014/0702/1627.html" target="_blank" rel="noopener">Android PopupWindow详解</a></p>
+<p><a href="http://blog.csdn.net/djy1135/article/details/13264211" target="_blank" rel="noopener">onCreate方法中调用PopupWindow的错误：android.view.WindowManager$BadTo</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android PopupWindow 相关信息/" data-id="cjabwqtlx0004hhyudrbdw8re" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android java.exe finished with non-zero1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android java.exe finished with non-zero1/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.675Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="android-bin-java-exe-finished-with-non-zero1"><a href="#android-bin-java-exe-finished-with-non-zero1" class="headerlink" title="android bin\java.exe finished with non-zero1"></a>android bin\java.exe finished with non-zero1</h1><h2 id="新建的项目出现的问题"><a href="#新建的项目出现的问题" class="headerlink" title="新建的项目出现的问题"></a>新建的项目出现的问题</h2><p>model 中 bulid.gradle compileSdkVersion buildToolsVersion 的编译 可能没有这个版本的</p>
+<p>如有app 的gradle 也有这个，去掉它</p>
+<h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><p><a href="http://blog.csdn.net/jhl122/article/details/52218670" target="_blank" rel="noopener">Android学习笔记-迁移报错command ‘C:\Program Files\Java\jdk1.7.0_67\bin\java.exe’’ finished with non-zero1</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android java.exe finished with non-zero1/" data-id="cjabwqtnm000qhhyu7cg6mdl1" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android button 显示" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/android button 显示/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.663Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="android-button-显示"><a href="#android-button-显示" class="headerlink" title="android button 显示"></a>android button 显示</h1><p>1.问题：</p>
+<p>在 RelativeLayout 中 xml Button 在同一级的 view 下面，但却显示在了 view 上方</p>
+<p>解决方案</p>
+<p>在button 中添加<br>android:stateListAnimator=”@null”</p>
+<hr>
+<p>可以看到，Button跑到了最上面，这是为毛啊？没找到答案，但找到了不是办法的解决办法，就是在Button上包一层布局即可。</p>
+<p>后续。。</p>
+<p>在Stack Overflow上找到了答案：<br>Starting with Lollipop, a StateListAnimator controlling elevation was added to the default Button style. In my experience, this forces buttons to appear above everything else regardless of placement in XML (or programmatic addition in your case). That might be what you’re experiencing.<br>To resolve this you can add a custom StateListAnimator if you need it or simply set it to null if you don’t.<br>XML:<br>android:stateListAnimator=”@null”</p>
+<p>Java:<br>Button button = new Button(this); button.setText(“Button”); if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) { button.setStateListAnimator(null); }</p>
+<p>More details: Android 5.0 android:elevation Works for View, but not Button?</p>
+<p>也就是说在5.0以上，系统会在button上wrapper上一层效果，就是StateListAnimator。去掉它或者自定义一个就可以解决上述问题。</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://www.jianshu.com/p/850f14d11a0e" target="_blank" rel="noopener">FrameLayout&amp;RelativeLayout下，和Button同级的View需注意</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/android button 显示/" data-id="cjabwqtnl000phhyup4ybhwko" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">__('next') &raquo;</a>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Android PopupWindow一般用法View view = View.inflate(context, R.layout.layout_view, null); PopupWindow popupWindow = new PopupWindow(view, width, height, true); popu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2017/11/23/Android PopupWindow 相关信息/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Android PopupWindow一般用法View view = View.inflate(context, R.layout.layout_view, null); PopupWindow popupWindow = new PopupWindow(view, width, height, true); popupWindow.setBackgroundDrawable(new ColorD">
+<meta property="og:updated_time" content="2017-11-23T03:17:19.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="Android PopupWindow一般用法View view = View.inflate(context, R.layout.layout_view, null); PopupWindow popupWindow = new PopupWindow(view, width, height, true); popupWindow.setBackgroundDrawable(new ColorD">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Android PopupWindow 相关信息" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/23/Android PopupWindow 相关信息/" class="article-date">
+  <time datetime="2017-11-23T03:17:19.679Z" itemprop="datePublished">2017-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android-PopupWindow"><a href="#Android-PopupWindow" class="headerlink" title="Android PopupWindow"></a>Android PopupWindow</h1><h2 id="一般用法"><a href="#一般用法" class="headerlink" title="一般用法"></a>一般用法</h2><pre><code>View view = View.inflate(context, R.layout.layout_view, null);
+PopupWindow popupWindow = new PopupWindow(view, width, height, true);
+popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));
+popupWindow.setOutsideTouchable(true);
+popupWindow.setAnimationStyle(R.style.pop_animation_style);
+popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+</code></pre><h2 id="细节分析"><a href="#细节分析" class="headerlink" title="细节分析"></a>细节分析</h2><h3 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h3><pre><code>public PopupWindow(View contentView, int width, int height, boolean focusable)
+</code></pre><p>contentView为要显示的view，width和height为宽和高，值为像素值，也可以是MATCHT_PARENT和WRAP_CONTENT。<br>focusable为是否可以获得焦点，这是一个很重要的参数，也可以通过</p>
+<pre><code>public void setFocusable(boolean focusable)
+</code></pre><p>来设置，如果focusable为false，在一个Activity弹出一个PopupWindow，按返回键，由于PopupWindow没有焦点，会直接退出Activity。如果focusable为true，PopupWindow弹出后，所有的触屏和物理按键都有PopupWindows处理。</p>
+<p>如果PopupWindow中有Editor的话，focusable要为true。</p>
+<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><pre><code>&lt;style name=&quot;pop_animation_style&quot;&gt;
+    &lt;item name=&quot;android:windowEnterAnimation&quot;&gt;@anim/pop_center_in&lt;/item&gt;
+    &lt;item name=&quot;android:windowExitAnimation&quot;&gt;@anim/pop_center_out&lt;/item&gt;
+&lt;/style&gt;
+
+popupWindow.setAnimationStyle(R.style.pop_animation_style);
+</code></pre><h3 id="PopupWindow-显示问题"><a href="#PopupWindow-显示问题" class="headerlink" title="PopupWindow 显示问题"></a>PopupWindow 显示问题</h3><p>需要在新建时设置 PopupWindow 的宽高，否则不显示；如果还不显示， 可尝试在 xml 根布局中添加背景<br>(mPopupWindow.update(width, height);)</p>
+<h3 id="设置宽高"><a href="#设置宽高" class="headerlink" title="设置宽高"></a>设置宽高</h3><p>有两种方法设置PopupWindow的大小：</p>
+<p>调用有宽高参数的构造函数：</p>
+<pre><code>LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+View contentview = inflater.inflate(R.layout.popup_process, null);
+PopupWindow popupWindow = new PopupWindow(contentview,LayoutParams.WRAP_CONTENT,
+LayoutParams.WRAP_CONTENT);
+</code></pre><p>通过setWidth和setHeight设置</p>
+<pre><code>PopupWindow popupWindow = new PopupWindow(contentview);
+popupWindow.setWidth(LayoutParams.WRAP_CONTENT);           
+popupWindow.setHeight(LayoutParams.WRAP_CONTENT);
+</code></pre><p>两种办法是等效的，不管采用何种办法，必须设置宽和高，否则不显示任何东西.</p>
+<p>这里的WRAP_CONTENT可以换成fill_parent 也可以是具体的数值，它是指PopupWindow的大小，也就是contentview的大小，注意popupwindow根据这个大小显示你的View，如果你的View本身是从xml得到的，那么xml的第一层view的大小属性将被忽略。<strong>相当于popupWindow的width和height属性直接和第一层View相对应。</strong></p>
+<h3 id="点击外部区域可关闭-PopupWindow"><a href="#点击外部区域可关闭-PopupWindow" class="headerlink" title="点击外部区域可关闭 PopupWindow"></a>点击外部区域可关闭 PopupWindow</h3><p>需要手动设置 PopupWindow 背景 popupWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));<br>和 popupWindow.setOutsideTouchable(true);</p>
+<h3 id="PopupWindow-showAtLocation和showAsDropDown参数分析"><a href="#PopupWindow-showAtLocation和showAsDropDown参数分析" class="headerlink" title="PopupWindow showAtLocation和showAsDropDown参数分析"></a>PopupWindow showAtLocation和showAsDropDown参数分析</h3><p>showAtLocation 中传入的 view 对弹出框基本没有影响，屏幕原点是屏幕的左上角 </p>
+<p>PopupWindow 的这两个方法都是控制PopupWindow 出现的，具体分析如下：</p>
+<ol>
+<li><p>showAtLocation，例如：showAtLocation(findViewById(R.id.search_ib), Gravity.TOP | Gravity.RIGHT,10, 10);<br>第一个参数：这个view是要能获取到window唯一标示的（也就是只要能获取到window 标示，view是什么控件都可以），应该是标示这个pw添加到哪个window里面，对控制pw出现位置没有影响；<br>第二个参数：请记住屏幕原点是屏幕的左上角。Gravity.TOP | Gravity.RIGHT指的就是屏幕的右上角，那么pw的中心点坐标是（屏幕宽,0）。pw默认是在屏幕的中间，也就是Gravity.LEFT表示pw的中心点坐标是(0,1/2屏幕高)；<br>第三、四个参数：偏移量的方向与第二个参数有关。Gravity.TOP | Gravity.RIGHT，以屏幕右上角为原点，pw往X轴负方向偏移10个像素，往Y轴正方向偏移10个像素；如果是Gravity.BOTTOM| Gravity.LEFT，以屏幕左下角为原点，pw往X轴正方向偏移10个像素，往Y轴正方向偏移10个像素。<br>注意：这个偏移量可以是正的，也可以是负的。无论偏移多大，pw是不会跑出屏幕。具体往轴的那个方向偏移，跟第二个参数有关，对于Gravity.CENTER的情况，偏移量负表示往轴的负方向，正往轴的正方向</p>
+</li>
+<li><p>showAsDropDown，例如：showAsDropDown(MainActivity.this.findViewById(R.id.logo_iv),100,0)，<br>以R.id.logo_iv的左下角为原点，向X轴正方向偏移100个像素，Y轴方向偏移0个像素。<br>注意：这个偏移量可以是正的，也可以是负的。无论偏移多大，pw是不会跑出屏幕。</p>
+</li>
+</ol>
+<h2 id="PopupWindow怎么合理控制弹出位置（showAtLocation）"><a href="#PopupWindow怎么合理控制弹出位置（showAtLocation）" class="headerlink" title="PopupWindow怎么合理控制弹出位置（showAtLocation）"></a>PopupWindow怎么合理控制弹出位置（showAtLocation）</h2><pre><code>// 一个自定义的布局，作为显示的内容
+Context context = null;　　// 真实环境中要赋值
+int layoutId = 0;　　　　　　// 布局ID
+View contentView = LayoutInflater.from(context).inflate(layoutId, null);
+
+final PopupWindow popupWindow = new PopupWindow(contentView,
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+
+popupWindow.setTouchable(true);
+// 如果不设置PopupWindow的背景，有些版本就会出现一个问题：无论是点击外部区域还是Back键都无法dismiss弹框
+// 这里单独写一篇文章来分析
+popupWindow.setBackgroundDrawable(new ColorDrawable());
+// 设置好参数之后再show
+popupWindow.showAsDropDown(contentView);
+</code></pre><p>如果创建PopupWindow的时候没有指定高宽，那么showAsDropDown默认只会向下弹出显示，这种情况有个最明显的缺点就是：弹窗口可能被屏幕截断，显示不全，所以需要使用到另外一个方法showAtLocation,这个的坐标是相对于整个屏幕的，所以需要我们自己计算位置。</p>
+<p>如下图所示，我们可以根据屏幕左上角的坐标A，屏幕高宽，点击View的左上角的坐标C，点击View的大小以及PopupWindow布局的大小计算出PopupWindow的显示位置B</p>
+<p>计算方法源码如下：</p>
+<pre><code>/**
+     * 计算出来的位置，y方向就在anchorView的上面和下面对齐显示，x方向就是与屏幕右边对齐显示
+     * 如果anchorView的位置有变化，就可以适当自己额外加入偏移来修正
+     * @param anchorView  呼出window的view
+     * @param contentView   window的内容布局
+     * @return window显示的左上角的xOff,yOff坐标
+ */
+private static int[] calculatePopWindowPos(final View anchorView, final View contentView) {
+    final int windowPos[] = new int[2];
+    final int anchorLoc[] = new int[2];
+    // 获取锚点View在屏幕上的左上角坐标位置
+    anchorView.getLocationOnScreen(anchorLoc);
+    final int anchorHeight = anchorView.getHeight();
+    // 获取屏幕的高宽
+    final int screenHeight = ScreenUtils.getScreenHeight(anchorView.getContext());
+    final int screenWidth = ScreenUtils.getScreenWidth(anchorView.getContext());
+    contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+    // 计算contentView的高宽
+    final int windowHeight = contentView.getMeasuredHeight();
+    final int windowWidth = contentView.getMeasuredWidth();
+    // 判断需要向上弹出还是向下弹出显示
+    final boolean isNeedShowUp = (screenHeight - anchorLoc[1] - anchorHeight &lt; windowHeight);
+    if (isNeedShowUp) {
+        windowPos[0] = screenWidth - windowWidth;
+        windowPos[1] = anchorLoc[1] - windowHeight;
+    } else {
+        windowPos[0] = screenWidth - windowWidth;
+        windowPos[1] = anchorLoc[1] + anchorHeight;
+    }
+    return windowPos;
+}
+</code></pre><p>接下来调用showAtLoaction显示：</p>
+<pre><code>View windowContentViewRoot = 我们要设置给PopupWindow进行显示的View
+int windowPos[] = calculatePopWindowPos(view, windowContentViewRoot);
+int xOff = 20；// 可以自己调整偏移
+windowPos[0] -= xOff;
+popupwindow.showAtLocation(view, Gravity.TOP | Gravity.START, windowPos[0], windowPos[1]);
+// windowContentViewRoot是根布局View
+</code></pre><p>上面的例子只是提供了一种计算方式，在实际开发中可以根据需求自己计算，比如anchorView在左边的情况，在中间的情况，可以根据实际需求写一个弹出位置能够自适应的PopupWindow。</p>
+<p>补充上获取屏幕高宽的代码ScreenUtils.java：</p>
+<pre><code>/**
+    * 获取屏幕高度(px)
+ */
+public static int getScreenHeight(Context context) {
+    return context.getResources().getDisplayMetrics().heightPixels;
+}
+/**
+    * 获取屏幕宽度(px)
+ */
+public static int getScreenWidth(Context context) {
+    return context.getResources().getDisplayMetrics().widthPixels;
+}
+</code></pre><h2 id="onCreate方法中调用PopupWindow的错误：android-view-WindowManager-BadTo"><a href="#onCreate方法中调用PopupWindow的错误：android-view-WindowManager-BadTo" class="headerlink" title="onCreate方法中调用PopupWindow的错误：android.view.WindowManager$BadTo"></a>onCreate方法中调用PopupWindow的错误：android.view.WindowManager$BadTo</h2><p>如题：在activity的oncreate方法中使用popupwindow出现以下错误：<br>Android.view.WindowManager$BadTokenException: Unable to add window –<br>token null is not valid; is your activity running?<br>错误代码如下 ：</p>
+<pre><code>pop= newPopupWindow(pop_view,320,250);
+pop.showAtLocation(parent, Gravity.TOP,0, 0);
+</code></pre><p>解决方法：<br>应把pop.showAtLocation(parent, Gravity.TOP,0, 0)这一句移出oncreate方法，在控件渲染完毕后再使用。<br>但是移出oncreate方法的话该移到哪里去呢？网友的方法大概是这几种：<br>1、移到事件中（比如一个button的click事件中）;</p>
+<p>2、移到子线程中;另起一线程,在线程中不断循环，直到判断控件是否渲染完毕(如长宽大于0),不推荐。。。</p>
+<p>3、移到重写的控件(parent)中,在控件ondraw()完后生成pop。</p>
+<p>ps：1、2绝对没问题，3没测试过。 </p>
+<p>后来在网上找到一个绝佳的方法：</p>
+<pre><code>@Override
+
+public void onWindowFocusChanged(boolean hasFocus) {
+
+     //
+     TODO Auto-generated method stub
+
+     super.onWindowFocusChanged(hasFocus);
+
+     if(hasFocus){
+
+      showPopupWindow(getApplicationContext());
+
+     }
+
+}
+</code></pre><p>其中showPopupWindow(getApplicationContext())是我自己定义的专门显示popupwindow的一个函数。<br>当activity获得焦点之后，activity是加载完毕的了，这个方法的技巧性比较强，很难想到。</p>
+<h2 id="参考信息"><a href="#参考信息" class="headerlink" title="参考信息"></a>参考信息</h2><p><a href="http://blog.csdn.net/ben0612/article/details/43191205" target="_blank" rel="noopener">PopupWindow showAtLocation和showAsDropDown参数分析</a></p>
+<p><a href="http://www.cnblogs.com/popfisher/p/5608436.html" target="_blank" rel="noopener">Android PopupWindow怎么合理控制弹出位置(showAtLocation)</a></p>
+<p><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2014/0702/1627.html" target="_blank" rel="noopener">Android PopupWindow详解</a></p>
+<p><a href="http://blog.csdn.net/djy1135/article/details/13264211" target="_blank" rel="noopener">onCreate方法中调用PopupWindow的错误：android.view.WindowManager$BadTo</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/23/Android PopupWindow 相关信息/" data-id="cjabwqtlx0004hhyudrbdw8re" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/11/23/android studio adb shell 命令/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/11/23/android java.exe finished with non-zero1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu-hexo/">ubuntu hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ubuntu-hexo/" style="font-size: 10px;">ubuntu hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/11/23/设计模式 依赖倒置原则/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/网络 DNS 网关 路由/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/程序设计中，为什么要解耦/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/用于app指向性功能高亮的库/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2017/11/23/环信 服务器 curl 获取数据/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
